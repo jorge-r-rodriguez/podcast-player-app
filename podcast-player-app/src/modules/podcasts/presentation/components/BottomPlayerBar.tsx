@@ -8,6 +8,7 @@ type BottomPlayerBarProps = {
   autoPlayToken?: number
   artworkUrl?: string | null
   onNext?: () => void
+  onPlaybackStateChange?: (isPlaying: boolean) => void
   onPrevious?: () => void
   onShuffle?: () => void
   title?: string
@@ -30,6 +31,7 @@ export function BottomPlayerBar({
   autoPlayToken = 0,
   artworkUrl,
   onNext,
+  onPlaybackStateChange,
   onPrevious,
   onShuffle,
   title = 'How to make your partner talk more',
@@ -84,6 +86,10 @@ export function BottomPlayerBar({
     }
   }, [effectiveVolume])
 
+  useEffect(() => {
+    onPlaybackStateChange?.(isPlaying)
+  }, [isPlaying, onPlaybackStateChange])
+
   const togglePlayback = async () => {
     const audio = audioRef.current
 
@@ -135,7 +141,7 @@ export function BottomPlayerBar({
   }
 
   return (
-    <aside className="fixed inset-x-0 bottom-0 z-20 h-[110px] bg-[#1a1a1a] text-white">
+    <aside className="fixed inset-x-0 bottom-0 z-20 h-[168px] bg-[#1a1a1a] text-white sm:h-[110px]">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption -- podcast previews are audio-only clips provided by iTunes without caption tracks. */}
       <audio
         aria-label={`Audio preview for ${title}`}
@@ -147,9 +153,9 @@ export function BottomPlayerBar({
         ref={audioRef}
         src={audioUrl ?? undefined}
       />
-      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[1fr] max-sm:px-4">
-        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 sm:grid-cols-[110px_1fr]">
-          <div className="size-[74px] overflow-hidden bg-white/10 sm:size-[110px]">
+      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[1fr] max-sm:grid-rows-[54px_82px] max-sm:gap-4 max-sm:px-4 max-sm:py-3">
+        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-sm:grid-cols-[54px_1fr] max-sm:gap-3 sm:grid-cols-[110px_1fr]">
+          <div className="size-[74px] overflow-hidden bg-white/10 max-sm:size-[54px] sm:size-[110px]">
             {artworkUrl ? (
               <img alt="" className="size-full object-cover" src={artworkUrl} />
             ) : (
@@ -162,8 +168,8 @@ export function BottomPlayerBar({
           </div>
         </div>
 
-        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:hidden">
-          <div className="grid grid-cols-[24px_24px_50px_24px_24px] items-center gap-[30px]">
+        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3">
+          <div className="grid grid-cols-[24px_24px_50px_24px_24px] items-center gap-[30px] max-sm:gap-6">
             <button
               aria-label="Shuffle episode"
               className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
@@ -218,7 +224,7 @@ export function BottomPlayerBar({
             </button>
           </div>
 
-          <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium">
+          <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium max-md:w-full max-md:max-w-[420px]">
             <span>{formatPlaybackTime(currentTime)}</span>
             <input
               aria-label="Seek playback"

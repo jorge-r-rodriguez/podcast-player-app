@@ -104,10 +104,35 @@ describe('Podcast discovery flow', () => {
     cy.get('audio').should(($audio) => {
       expect(($audio[0] as { volume: number }).volume).to.be.lessThan(0.85)
     })
+    cy.get('input#podcast-search').clear()
+    cy.get('input#podcast-search').type('10')
+    cy.get('[data-testid="episode-results-scroll"]')
+      .should('contain.text', 'Building better podcasts 10')
+      .and('not.contain.text', 'Building better podcasts 2')
+    cy.get('input#podcast-search').clear()
     cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
     cy.contains('Building better podcasts 10').should('be.visible')
     cy.get('body').type('{esc}')
     cy.get('a[aria-label="Back to search"]').click()
     cy.get('input#podcast-search').should('be.visible')
+  })
+
+  it('keeps playback controls usable on mobile', () => {
+    cy.viewport(390, 844)
+    cy.visit('/podcasts')
+
+    cy.contains('Music Lab Podcast').click()
+    cy.wait('@lookupPodcast')
+
+    cy.get('button[aria-label="Shuffle episode"]').should('be.visible')
+    cy.get('button[aria-label="Previous episode"]').should('be.visible')
+    cy.get('button[aria-label="Play playback"]').should('be.visible')
+    cy.get('button[aria-label="Next episode"]').should('be.visible')
+    cy.get('button[aria-label="Enable repeat"]').should('be.visible')
+
+    cy.get('button[aria-label="Play Building better podcasts 2"]').click()
+    cy.get('button[aria-label="Pause playback"]').should('be.visible')
+    cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
+    cy.contains('Building better podcasts 10').should('be.visible')
   })
 })

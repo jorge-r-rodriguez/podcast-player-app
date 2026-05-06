@@ -26,7 +26,8 @@ const EPISODE_SORT_OPTIONS: OrderByOption<EpisodeSortOption>[] = [
 
 export function PodcastDetailPage() {
   const { podcastId } = useParams()
-  const [detailSearchTerm, setDetailSearchTerm] = useState('podcast')
+  const [detailSearchTerm, setDetailSearchTerm] = useState('')
+  const [isPlayerPlaying, setIsPlayerPlaying] = useState(false)
   const [playRequestToken, setPlayRequestToken] = useState(0)
   const [sortOption, setSortOption] = useState<EpisodeSortOption>('released')
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null)
@@ -51,9 +52,23 @@ export function PodcastDetailPage() {
     )
   }, [podcast?.episodes, sortOption])
 
+  const visibleEpisodes = useMemo(() => {
+    const normalizedSearchTerm = detailSearchTerm.trim().toLowerCase()
+
+    if (!normalizedSearchTerm) {
+      return orderedEpisodes
+    }
+
+    return orderedEpisodes.filter((episode) => {
+      const searchableText = `${episode.title} ${episode.description ?? ''}`.toLowerCase()
+
+      return searchableText.includes(normalizedSearchTerm)
+    })
+  }, [detailSearchTerm, orderedEpisodes])
+
   const playableEpisodes = useMemo(
-    () => orderedEpisodes.filter((episode) => episode.previewUrl),
-    [orderedEpisodes],
+    () => visibleEpisodes.filter((episode) => episode.previewUrl),
+    [visibleEpisodes],
   )
 
   const playerEpisode = useMemo(() => {
@@ -177,16 +192,21 @@ export function PodcastDetailPage() {
               />
             </div>
 
-            {orderedEpisodes.length > 0 ? (
+            {visibleEpisodes.length > 0 ? (
               <EpisodeList
-                episodes={orderedEpisodes}
+                episodes={visibleEpisodes}
                 onSelectEpisode={playEpisode}
+                playingEpisodeId={isPlayerPlaying ? playerEpisode?.id : null}
                 selectedEpisodeId={playerEpisode?.id ?? null}
               />
             ) : (
               <EmptyState
-                description="iTunes returned podcast metadata, but no episode list for this collection."
-                title="No episodes available"
+                description={
+                  orderedEpisodes.length > 0
+                    ? 'No episodes match the current search.'
+                    : 'iTunes returned podcast metadata, but no episode list for this collection.'
+                }
+                title={orderedEpisodes.length > 0 ? 'No matching episodes' : 'No episodes available'}
               />
             )}
 
@@ -196,6 +216,7 @@ export function PodcastDetailPage() {
               autoPlayToken={playRequestToken}
               artworkUrl={podcast.artworkUrl}
               onNext={() => selectAdjacentEpisode('next')}
+              onPlaybackStateChange={setIsPlayerPlaying}
               onPrevious={() => selectAdjacentEpisode('previous')}
               onShuffle={selectRandomEpisode}
               title={playerEpisode?.title ?? podcast.title}
