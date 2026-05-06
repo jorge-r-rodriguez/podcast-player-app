@@ -30,7 +30,7 @@ export function EpisodeList({
       </div>
 
       <div
-        className="podcast-scroll max-h-[calc(100dvh-565px)] min-h-[160px] overflow-y-auto pr-1"
+        className="podcast-scroll max-h-[calc(100dvh-500px)] min-h-[120px] overflow-y-auto pr-1 sm:max-h-[calc(100dvh-565px)] sm:min-h-[160px]"
         data-testid="episode-results-scroll"
       >
         {episodes.map((episode) => {

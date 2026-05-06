@@ -132,6 +132,10 @@ describe('Podcast discovery flow', () => {
 
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('button[aria-label="Pause playback"]').should('be.visible')
+    cy.get('[data-testid="episode-results-scroll"]').should(($element) => {
+      expect($element[0].clientHeight).to.be.greaterThan(100)
+      expect($element[0].scrollHeight).to.be.greaterThan($element[0].clientHeight)
+    })
     cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
     cy.contains('Building better podcasts 10').should('be.visible')
   })

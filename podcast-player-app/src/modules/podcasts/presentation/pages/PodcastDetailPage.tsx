@@ -120,7 +120,7 @@ export function PodcastDetailPage() {
 
   return (
     <PodcastLayout title="Podcast View">
-      <div className="mx-auto grid w-full max-w-[842px] gap-5">
+      <div className="mx-auto grid w-full max-w-[842px] gap-3 sm:gap-5">
         <div className="grid grid-cols-[50px_1fr] gap-[15px]">
           <Link
             aria-label="Back to search"
@@ -152,8 +152,8 @@ export function PodcastDetailPage() {
 
         {podcast ? (
           <>
-            <div className="mt-3 overflow-hidden rounded-[15px] bg-white/10">
-              <div className="h-[280px] w-full">
+            <div className="mt-1 overflow-hidden rounded-[15px] bg-white/10 sm:mt-3">
+              <div className="h-[210px] w-full sm:h-[280px]">
                 {podcast.artworkUrl ? (
                   <img
                     alt={`${podcast.title} artwork`}
@@ -164,10 +164,10 @@ export function PodcastDetailPage() {
               </div>
             </div>
 
-            <div className="-mt-2 grid grid-cols-[60px_1fr_127px] items-center">
+            <div className="grid grid-cols-[52px_minmax(0,1fr)] items-center gap-x-4 gap-y-2 sm:-mt-2 sm:grid-cols-[60px_1fr_127px] sm:gap-0">
               <button
                 aria-label={playerEpisode ? `Play ${playerEpisode.title}` : 'Play playlist'}
-                className="grid size-[60px] place-items-center rounded-full bg-[#5c67de]"
+                className="grid size-[52px] place-items-center rounded-full bg-[#5c67de] sm:size-[60px]"
                 onClick={() => {
                   if (playerEpisode) {
                     playEpisode(playerEpisode)
@@ -175,21 +175,23 @@ export function PodcastDetailPage() {
                 }}
                 type="button"
               >
-                <Play aria-hidden="true" className="ml-1 size-7 fill-white text-white" />
+                <Play aria-hidden="true" className="ml-1 size-6 fill-white text-white sm:size-7" />
               </button>
 
-              <div className="flex min-w-0 items-center justify-center gap-2 px-4">
-                <h2 className="truncate text-center text-[32px] font-bold leading-[40px] tracking-normal text-white">
+              <div className="flex min-w-0 items-center gap-2 sm:justify-center sm:px-4">
+                <h2 className="truncate text-[24px] font-bold leading-8 tracking-normal text-white sm:text-center sm:text-[32px] sm:leading-[40px]">
                   {podcast.title}
                 </h2>
-                <ShieldCheck className="size-[25px] shrink-0 fill-[#1d9bf0] text-[#1d9bf0]" />
+                <ShieldCheck className="size-5 shrink-0 fill-[#1d9bf0] text-[#1d9bf0] sm:size-[25px]" />
               </div>
 
-              <OrderByControl
-                onChange={setSortOption}
-                options={EPISODE_SORT_OPTIONS}
-                value={sortOption}
-              />
+              <div className="col-span-2 flex justify-end sm:col-span-1 sm:block">
+                <OrderByControl
+                  onChange={setSortOption}
+                  options={EPISODE_SORT_OPTIONS}
+                  value={sortOption}
+                />
+              </div>
             </div>
 
             {visibleEpisodes.length > 0 ? (
@@ -206,7 +208,9 @@ export function PodcastDetailPage() {
                     ? 'No episodes match the current search.'
                     : 'iTunes returned podcast metadata, but no episode list for this collection.'
                 }
-                title={orderedEpisodes.length > 0 ? 'No matching episodes' : 'No episodes available'}
+                title={
+                  orderedEpisodes.length > 0 ? 'No matching episodes' : 'No episodes available'
+                }
               />
             )}
 

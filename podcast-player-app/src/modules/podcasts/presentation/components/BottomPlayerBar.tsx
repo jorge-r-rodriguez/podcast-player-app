@@ -141,7 +141,7 @@ export function BottomPlayerBar({
   }
 
   return (
-    <aside className="fixed inset-x-0 bottom-0 z-20 h-[168px] bg-[#1a1a1a] text-white sm:h-[110px]">
+    <aside className="fixed inset-x-0 bottom-0 z-20 h-[132px] bg-[#1a1a1a] text-white sm:h-[110px]">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption -- podcast previews are audio-only clips provided by iTunes without caption tracks. */}
       <audio
         aria-label={`Audio preview for ${title}`}
@@ -153,9 +153,9 @@ export function BottomPlayerBar({
         ref={audioRef}
         src={audioUrl ?? undefined}
       />
-      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[1fr] max-sm:grid-rows-[54px_82px] max-sm:gap-4 max-sm:px-4 max-sm:py-3">
-        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-sm:grid-cols-[54px_1fr] max-sm:gap-3 sm:grid-cols-[110px_1fr]">
-          <div className="size-[74px] overflow-hidden bg-white/10 max-sm:size-[54px] sm:size-[110px]">
+      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[minmax(0,1fr)_210px] max-sm:grid-rows-[42px_38px] max-sm:gap-x-3 max-sm:gap-y-2 max-sm:px-4 max-sm:py-3">
+        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-sm:col-span-1 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 sm:grid-cols-[110px_1fr]">
+          <div className="size-[74px] overflow-hidden bg-white/10 max-sm:size-[42px] sm:size-[110px]">
             {artworkUrl ? (
               <img alt="" className="size-full object-cover" src={artworkUrl} />
             ) : (
@@ -163,13 +163,15 @@ export function BottomPlayerBar({
             )}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-white sm:text-base">{title}</p>
-            <p className="truncate text-sm font-medium text-white/30">{artist}</p>
+            <p className="truncate text-sm font-medium text-white max-sm:text-[13px] sm:text-base">
+              {title}
+            </p>
+            <p className="truncate text-sm font-medium text-white/30 max-sm:text-xs">{artist}</p>
           </div>
         </div>
 
-        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3">
-          <div className="grid grid-cols-[24px_24px_50px_24px_24px] items-center gap-[30px] max-sm:gap-6">
+        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:col-span-1 max-sm:col-start-2 max-sm:row-span-2 max-sm:row-start-1 max-sm:self-center">
+          <div className="grid grid-cols-[22px_22px_48px_22px_22px] items-center gap-5 sm:grid-cols-[24px_24px_50px_24px_24px] sm:gap-[30px]">
             <button
               aria-label="Shuffle episode"
               className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
@@ -177,7 +179,7 @@ export function BottomPlayerBar({
               onClick={onShuffle}
               type="button"
             >
-              <Shuffle className="size-6" />
+              <Shuffle className="size-5 sm:size-6" />
             </button>
             <button
               aria-label="Previous episode"
@@ -186,11 +188,11 @@ export function BottomPlayerBar({
               onClick={onPrevious}
               type="button"
             >
-              <SkipBack className="size-6" />
+              <SkipBack className="size-5 sm:size-6" />
             </button>
             <button
               aria-label={isPlaying ? 'Pause playback' : 'Play playback'}
-              className="grid size-[50px] place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45"
+              className="grid size-12 place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[50px]"
               disabled={!audioUrl}
               onClick={() => {
                 void togglePlayback()
@@ -210,7 +212,7 @@ export function BottomPlayerBar({
               onClick={onNext}
               type="button"
             >
-              <SkipForward className="size-6" />
+              <SkipForward className="size-5 sm:size-6" />
             </button>
             <button
               aria-label={isRepeatEnabled ? 'Disable repeat' : 'Enable repeat'}
@@ -220,11 +222,13 @@ export function BottomPlayerBar({
               onClick={() => setIsRepeatEnabled((nextValue) => !nextValue)}
               type="button"
             >
-              <Repeat className={`size-6 ${isRepeatEnabled ? 'text-[#8f98ff]' : 'text-white'}`} />
+              <Repeat
+                className={`size-5 sm:size-6 ${isRepeatEnabled ? 'text-[#8f98ff]' : 'text-white'}`}
+              />
             </button>
           </div>
 
-          <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium max-md:w-full max-md:max-w-[420px]">
+          <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium max-md:w-full max-md:max-w-[420px] max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:max-w-none max-sm:text-xs">
             <span>{formatPlaybackTime(currentTime)}</span>
             <input
               aria-label="Seek playback"
