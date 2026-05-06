@@ -129,6 +129,12 @@ describe('Podcast discovery flow', () => {
     cy.get('button[aria-label="Play playback"]').should('be.visible')
     cy.get('button[aria-label="Next episode"]').should('be.visible')
     cy.get('button[aria-label="Enable repeat"]').should('be.visible')
+    cy.get('aside').should(($player) => {
+      const rect = $player[0].getBoundingClientRect()
+
+      expect(rect.left).to.equal(0)
+      expect(rect.right).to.equal(390)
+    })
 
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('button[aria-label="Pause playback"]').should('be.visible')

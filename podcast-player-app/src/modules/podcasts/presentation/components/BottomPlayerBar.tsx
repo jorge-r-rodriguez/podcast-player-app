@@ -153,8 +153,8 @@ export function BottomPlayerBar({
         ref={audioRef}
         src={audioUrl ?? undefined}
       />
-      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[minmax(0,1fr)_210px] max-sm:grid-rows-[42px_38px] max-sm:gap-x-3 max-sm:gap-y-2 max-sm:px-4 max-sm:py-3">
-        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-sm:col-span-1 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 sm:grid-cols-[110px_1fr]">
+      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[1fr] max-sm:grid-rows-[42px_66px] max-sm:gap-2 max-sm:px-4 max-sm:py-3">
+        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 sm:grid-cols-[110px_1fr]">
           <div className="size-[74px] overflow-hidden bg-white/10 max-sm:size-[42px] sm:size-[110px]">
             {artworkUrl ? (
               <img alt="" className="size-full object-cover" src={artworkUrl} />
@@ -170,8 +170,8 @@ export function BottomPlayerBar({
           </div>
         </div>
 
-        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:col-span-1 max-sm:col-start-2 max-sm:row-span-2 max-sm:row-start-1 max-sm:self-center">
-          <div className="grid grid-cols-[22px_22px_48px_22px_22px] items-center gap-5 sm:grid-cols-[24px_24px_50px_24px_24px] sm:gap-[30px]">
+        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:w-full max-sm:gap-2">
+          <div className="grid grid-cols-[22px_22px_48px_22px_22px] items-center gap-5 max-sm:justify-center sm:grid-cols-[24px_24px_50px_24px_24px] sm:gap-[30px]">
             <button
               aria-label="Shuffle episode"
               className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
@@ -228,7 +228,7 @@ export function BottomPlayerBar({
             </button>
           </div>
 
-          <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium max-md:w-full max-md:max-w-[420px] max-sm:col-span-2 max-sm:col-start-1 max-sm:row-start-2 max-sm:max-w-none max-sm:text-xs">
+          <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium max-md:w-full max-md:max-w-[420px] max-sm:max-w-none max-sm:text-xs">
             <span>{formatPlaybackTime(currentTime)}</span>
             <input
               aria-label="Seek playback"
