@@ -2,7 +2,22 @@
 
 Mini React application for searching and listening to music podcasts using the iTunes Search API. The visual direction is based on the provided Figma community design and follows a dark, minimal podcast player interface.
 
-This repository is being built incrementally with senior-level reviewability in mind: small commits, explicit boundaries, and architecture decisions documented as the implementation grows.
+The project is built incrementally with senior-level reviewability in mind: small commits, explicit boundaries, tested architecture layers, and production-oriented decisions documented in this README.
+
+## Implemented Features
+
+- Podcast search with debounce.
+- Real iTunes Search API integration.
+- Configurable CORS proxy support through infrastructure.
+- Responsive dark UI inspired by the Figma reference.
+- Search result pagination.
+- Loading, error and empty states.
+- Podcast detail route.
+- Episode list when iTunes returns podcast episodes.
+- HTML5 audio player for episode previews.
+- Route-level lazy loading.
+- React Query caching and retry control.
+- Unit, component and E2E test coverage.
 
 ## Technical Stack
 
@@ -91,7 +106,7 @@ The application will use the iTunes Search API:
 - Search podcasts: `https://itunes.apple.com/search?media=podcast&term={query}`
 - Podcast lookup: `https://itunes.apple.com/lookup?id={collectionId}`
 
-API access will be implemented in `src/modules/podcasts/infrastructure/api`.
+API access is implemented in `src/modules/podcasts/infrastructure/api`.
 
 ## CORS Handling
 
@@ -103,7 +118,7 @@ VITE_CORS_PROXY_URL=https://api.allorigins.win/raw?url=
 VITE_ENABLE_CORS_PROXY=false
 ```
 
-If browser CORS restrictions appear during integration, the AllOrigins proxy will be applied inside infrastructure only. Components and hooks will remain unaware of proxy details.
+If browser CORS restrictions appear during integration, the AllOrigins proxy is applied inside infrastructure only. Components and hooks remain unaware of proxy details.
 
 ## UI Direction
 
@@ -144,19 +159,14 @@ npm run format
 
 ## Testing Strategy
 
-Current baseline:
-
-- Jest and React Testing Library are configured.
-- Cypress is configured for E2E tests.
-- A shell-level route render test is included.
-
-Planned coverage:
+Current coverage:
 
 - Unit tests for podcast mappers.
 - Unit tests for domain use cases.
+- Unit tests for shared formatting utilities.
 - Hook tests for debounced search behavior.
-- Component tests for `PodcastCard`, `PodcastSearchInput`, `EmptyState`, and `ErrorState`.
-- Cypress E2E flow: load app, search podcast, inspect results, open detail, return to list.
+- Component tests for `PodcastCard`, `PodcastSearchInput`, `EmptyState`, `ErrorState`, `EpisodeList`, and `PodcastPlayer`.
+- Cypress E2E flow: load app, search podcast, inspect results, open detail, validate audio player, return to list.
 
 ## Accessibility Considerations
 
@@ -179,17 +189,17 @@ Baseline decisions already in place:
 - React Query provider configured with `staleTime`, `gcTime`, controlled retry, and disabled focus refetch.
 - Feature modules prepared for code splitting and low coupling.
 
-Planned decisions:
+Implemented decisions:
 
 - Debounced search input to avoid unnecessary API calls.
-- Memoized derived data for pagination.
-- Stable callbacks for frequently rendered list items.
+- Memoized derived data for pagination and selected episode playback.
 - React Query cache keys by query and podcast ID.
-- Avoid business logic inside JSX.
+- Repository contracts and mappers isolate the iTunes API.
+- Business logic stays out of JSX and visual components.
 
 ## Screenshots
 
-Screenshots will be added after the search and detail screens are implemented.
+Screenshots can be added from the local app once final visual review is complete.
 
 ## Git Commit Convention
 
