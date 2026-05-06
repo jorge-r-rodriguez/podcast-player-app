@@ -38,6 +38,20 @@ describe('Podcast discovery flow', () => {
         results: [podcastResults[0], ...episodeResults],
       },
     }).as('lookupPodcast')
+
+    cy.on('window:before:load', (window) => {
+      const mediaWindow = window as unknown as {
+        HTMLMediaElement: {
+          prototype: {
+            pause: () => void
+            play: () => Promise<void>
+          }
+        }
+      }
+
+      mediaWindow.HTMLMediaElement.prototype.play = () => Promise.resolve()
+      mediaWindow.HTMLMediaElement.prototype.pause = () => undefined
+    })
   })
 
   it('searches podcasts, opens detail and returns to the list', () => {
@@ -77,6 +91,7 @@ describe('Podcast discovery flow', () => {
     })
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('audio').should('have.attr', 'src', 'https://example.com/audio-2.mp3')
+    cy.get('button[aria-label="Pause playback"]').should('be.visible')
     cy.get('button[aria-label="Next episode"]').click()
     cy.get('audio').should('have.attr', 'src', 'https://example.com/audio-3.mp3')
     cy.get('button[aria-label="Previous episode"]').click()

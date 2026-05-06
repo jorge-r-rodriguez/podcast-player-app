@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 type BottomPlayerBarProps = {
   audioUrl?: string | null
   artist?: string
+  autoPlayToken?: number
   artworkUrl?: string | null
   onNext?: () => void
   onPrevious?: () => void
@@ -26,6 +27,7 @@ const createRangeStyle = (progress: number) =>
 export function BottomPlayerBar({
   audioUrl,
   artist = 'Ken Adams',
+  autoPlayToken = 0,
   artworkUrl,
   onNext,
   onPrevious,
@@ -56,6 +58,25 @@ export function BottomPlayerBar({
     setDuration(0)
     setIsPlaying(false)
   }, [audioUrl])
+
+  useEffect(() => {
+    const audio = audioRef.current
+
+    if (!audio || !audioUrl || autoPlayToken === 0) {
+      return
+    }
+
+    const playSelectedEpisode = async () => {
+      try {
+        setIsPlaying(true)
+        await audio.play()
+      } catch {
+        setIsPlaying(false)
+      }
+    }
+
+    void playSelectedEpisode()
+  }, [audioUrl, autoPlayToken])
 
   useEffect(() => {
     if (audioRef.current) {

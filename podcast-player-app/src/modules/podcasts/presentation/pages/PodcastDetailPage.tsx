@@ -27,6 +27,7 @@ const EPISODE_SORT_OPTIONS: OrderByOption<EpisodeSortOption>[] = [
 export function PodcastDetailPage() {
   const { podcastId } = useParams()
   const [detailSearchTerm, setDetailSearchTerm] = useState('podcast')
+  const [playRequestToken, setPlayRequestToken] = useState(0)
   const [sortOption, setSortOption] = useState<EpisodeSortOption>('released')
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null)
   const { data: podcast, error, isError, isFetching, refetch } = usePodcastDetail({ podcastId })
@@ -78,6 +79,7 @@ export function PodcastDetailPage() {
         : (currentIndex - 1 + playableEpisodes.length) % playableEpisodes.length
 
     setSelectedEpisode(playableEpisodes[nextIndex])
+    setPlayRequestToken((token) => token + 1)
   }
 
   const selectRandomEpisode = () => {
@@ -93,6 +95,12 @@ export function PodcastDetailPage() {
     const nextIndex = indexes[Math.floor(Math.random() * indexes.length)]
 
     setSelectedEpisode(playableEpisodes[nextIndex])
+    setPlayRequestToken((token) => token + 1)
+  }
+
+  const playEpisode = (episode: Episode) => {
+    setSelectedEpisode(episode)
+    setPlayRequestToken((token) => token + 1)
   }
 
   return (
@@ -147,7 +155,7 @@ export function PodcastDetailPage() {
                 className="grid size-[60px] place-items-center rounded-full bg-[#5c67de]"
                 onClick={() => {
                   if (playerEpisode) {
-                    setSelectedEpisode(playerEpisode)
+                    playEpisode(playerEpisode)
                   }
                 }}
                 type="button"
@@ -172,7 +180,7 @@ export function PodcastDetailPage() {
             {orderedEpisodes.length > 0 ? (
               <EpisodeList
                 episodes={orderedEpisodes}
-                onSelectEpisode={setSelectedEpisode}
+                onSelectEpisode={playEpisode}
                 selectedEpisodeId={playerEpisode?.id ?? null}
               />
             ) : (
@@ -185,6 +193,7 @@ export function PodcastDetailPage() {
             <BottomPlayerBar
               artist={podcast.artist}
               audioUrl={playerEpisode?.previewUrl}
+              autoPlayToken={playRequestToken}
               artworkUrl={podcast.artworkUrl}
               onNext={() => selectAdjacentEpisode('next')}
               onPrevious={() => selectAdjacentEpisode('previous')}
