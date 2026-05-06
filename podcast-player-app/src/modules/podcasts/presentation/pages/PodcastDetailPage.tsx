@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronLeft, Play, Search, ShieldCheck } from 'lucide-react'
+import { ChevronLeft, Play, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -9,22 +9,91 @@ import { EmptyState } from '@/modules/podcasts/presentation/components/EmptyStat
 import { EpisodeList } from '@/modules/podcasts/presentation/components/EpisodeList'
 import { ErrorState } from '@/modules/podcasts/presentation/components/ErrorState'
 import { LoadingState } from '@/modules/podcasts/presentation/components/LoadingState'
+import {
+  type OrderByOption,
+  OrderByControl,
+} from '@/modules/podcasts/presentation/components/OrderByControl'
 import { PodcastSearchInput } from '@/modules/podcasts/presentation/components/PodcastSearchInput'
 import { PodcastLayout } from '@/modules/podcasts/presentation/layouts/PodcastLayout'
+
+type EpisodeSortOption = 'released' | 'title' | 'duration'
+
+const EPISODE_SORT_OPTIONS: OrderByOption<EpisodeSortOption>[] = [
+  { label: 'Released', value: 'released' },
+  { label: 'Title', value: 'title' },
+  { label: 'Duration', value: 'duration' },
+]
 
 export function PodcastDetailPage() {
   const { podcastId } = useParams()
   const [detailSearchTerm, setDetailSearchTerm] = useState('podcast')
+  const [sortOption, setSortOption] = useState<EpisodeSortOption>('released')
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null)
   const { data: podcast, error, isError, isFetching, refetch } = usePodcastDetail({ podcastId })
+
+  const orderedEpisodes = useMemo(() => {
+    const nextEpisodes = [...(podcast?.episodes ?? [])]
+
+    if (sortOption === 'title') {
+      return nextEpisodes.sort((left, right) => left.title.localeCompare(right.title))
+    }
+
+    if (sortOption === 'duration') {
+      return nextEpisodes.sort(
+        (left, right) => (right.durationMillis ?? 0) - (left.durationMillis ?? 0),
+      )
+    }
+
+    return nextEpisodes.sort(
+      (left, right) =>
+        new Date(right.releaseDate ?? 0).getTime() - new Date(left.releaseDate ?? 0).getTime(),
+    )
+  }, [podcast?.episodes, sortOption])
+
+  const playableEpisodes = useMemo(
+    () => orderedEpisodes.filter((episode) => episode.previewUrl),
+    [orderedEpisodes],
+  )
 
   const playerEpisode = useMemo(() => {
     if (selectedEpisode) {
       return selectedEpisode
     }
 
-    return podcast?.episodes.find((episode) => episode.previewUrl) ?? null
-  }, [podcast?.episodes, selectedEpisode])
+    return playableEpisodes[0] ?? null
+  }, [playableEpisodes, selectedEpisode])
+
+  const selectAdjacentEpisode = (direction: 'next' | 'previous') => {
+    if (playableEpisodes.length === 0) {
+      return
+    }
+
+    const currentIndex = Math.max(
+      playableEpisodes.findIndex((episode) => episode.id === playerEpisode?.id),
+      0,
+    )
+    const nextIndex =
+      direction === 'next'
+        ? (currentIndex + 1) % playableEpisodes.length
+        : (currentIndex - 1 + playableEpisodes.length) % playableEpisodes.length
+
+    setSelectedEpisode(playableEpisodes[nextIndex])
+  }
+
+  const selectRandomEpisode = () => {
+    if (playableEpisodes.length === 0) {
+      return
+    }
+
+    const currentIndex = playableEpisodes.findIndex((episode) => episode.id === playerEpisode?.id)
+    const availableIndexes = playableEpisodes
+      .map((_, index) => index)
+      .filter((index) => index !== currentIndex)
+    const indexes = availableIndexes.length > 0 ? availableIndexes : [0]
+    const nextIndex = indexes[Math.floor(Math.random() * indexes.length)]
+
+    setSelectedEpisode(playableEpisodes[nextIndex])
+  }
 
   return (
     <PodcastLayout title="Podcast View">
@@ -93,21 +162,16 @@ export function PodcastDetailPage() {
                 <ShieldCheck className="size-[25px] shrink-0 fill-[#1d9bf0] text-[#1d9bf0]" />
               </div>
 
-              <div className="flex h-10 items-center gap-5 text-white">
-                <Search aria-hidden="true" className="size-4" />
-                <button
-                  className="flex h-10 items-center gap-1.5 text-base font-normal"
-                  type="button"
-                >
-                  Order by
-                  <ChevronDown aria-hidden="true" className="size-[18px]" />
-                </button>
-              </div>
+              <OrderByControl
+                onChange={setSortOption}
+                options={EPISODE_SORT_OPTIONS}
+                value={sortOption}
+              />
             </div>
 
-            {podcast.episodes.length > 0 ? (
+            {orderedEpisodes.length > 0 ? (
               <EpisodeList
-                episodes={podcast.episodes}
+                episodes={orderedEpisodes}
                 onSelectEpisode={setSelectedEpisode}
                 selectedEpisodeId={playerEpisode?.id ?? null}
               />
@@ -122,6 +186,9 @@ export function PodcastDetailPage() {
               artist={podcast.artist}
               audioUrl={playerEpisode?.previewUrl}
               artworkUrl={podcast.artworkUrl}
+              onNext={() => selectAdjacentEpisode('next')}
+              onPrevious={() => selectAdjacentEpisode('previous')}
+              onShuffle={selectRandomEpisode}
               title={playerEpisode?.title ?? podcast.title}
             />
           </>

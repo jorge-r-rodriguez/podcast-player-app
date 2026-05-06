@@ -1,10 +1,14 @@
-import { Pause, Play, Repeat, Shuffle, SkipBack, SkipForward, Volume2 } from 'lucide-react'
+import { Pause, Play, Repeat, Shuffle, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
+import type { CSSProperties } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 type BottomPlayerBarProps = {
   audioUrl?: string | null
   artist?: string
   artworkUrl?: string | null
+  onNext?: () => void
+  onPrevious?: () => void
+  onShuffle?: () => void
   title?: string
 }
 
@@ -16,18 +20,28 @@ function formatPlaybackTime(value: number) {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
+const createRangeStyle = (progress: number) =>
+  ({ '--range-progress': `${progress}%` }) as CSSProperties
+
 export function BottomPlayerBar({
   audioUrl,
   artist = 'Ken Adams',
   artworkUrl,
+  onNext,
+  onPrevious,
+  onShuffle,
   title = 'How to make your partner talk more',
 }: BottomPlayerBarProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+  const [isRepeatEnabled, setIsRepeatEnabled] = useState(false)
+  const [volume, setVolume] = useState(0.85)
 
   const progress = duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0
+  const effectiveVolume = isMuted ? 0 : volume
 
   useEffect(() => {
     const audio = audioRef.current
@@ -42,6 +56,12 @@ export function BottomPlayerBar({
     setDuration(0)
     setIsPlaying(false)
   }, [audioUrl])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = effectiveVolume
+    }
+  }, [effectiveVolume])
 
   const togglePlayback = async () => {
     const audio = audioRef.current
@@ -64,12 +84,41 @@ export function BottomPlayerBar({
     }
   }
 
+  const seekToProgress = (nextProgress: number) => {
+    const audio = audioRef.current
+
+    if (!audio || !duration) {
+      return
+    }
+
+    audio.currentTime = (nextProgress / 100) * duration
+    setCurrentTime(audio.currentTime)
+  }
+
+  const handleEnded = () => {
+    const audio = audioRef.current
+
+    if (isRepeatEnabled && audio) {
+      audio.currentTime = 0
+      void audio.play()
+      return
+    }
+
+    setIsPlaying(false)
+    onNext?.()
+  }
+
+  const updateVolume = (nextVolume: number) => {
+    setVolume(nextVolume)
+    setIsMuted(nextVolume === 0)
+  }
+
   return (
     <aside className="fixed inset-x-0 bottom-0 z-20 h-[110px] bg-[#1a1a1a] text-white">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption -- podcast previews are audio-only clips provided by iTunes without caption tracks. */}
       <audio
         aria-label={`Audio preview for ${title}`}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={handleEnded}
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
@@ -94,8 +143,24 @@ export function BottomPlayerBar({
 
         <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:hidden">
           <div className="grid grid-cols-[24px_24px_50px_24px_24px] items-center gap-[30px]">
-            <Shuffle className="size-6 text-white" />
-            <SkipBack className="size-6 text-white" />
+            <button
+              aria-label="Shuffle episode"
+              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={!audioUrl || !onShuffle}
+              onClick={onShuffle}
+              type="button"
+            >
+              <Shuffle className="size-6" />
+            </button>
+            <button
+              aria-label="Previous episode"
+              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={!audioUrl || !onPrevious}
+              onClick={onPrevious}
+              type="button"
+            >
+              <SkipBack className="size-6" />
+            </button>
             <button
               aria-label={isPlaying ? 'Pause playback' : 'Play playback'}
               className="grid size-[50px] place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45"
@@ -111,18 +176,41 @@ export function BottomPlayerBar({
                 <Play className="ml-1 size-5 fill-white text-white" />
               )}
             </button>
-            <SkipForward className="size-6 text-white" />
-            <Repeat className="size-6 text-white" />
+            <button
+              aria-label="Next episode"
+              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={!audioUrl || !onNext}
+              onClick={onNext}
+              type="button"
+            >
+              <SkipForward className="size-6" />
+            </button>
+            <button
+              aria-label={isRepeatEnabled ? 'Disable repeat' : 'Enable repeat'}
+              aria-pressed={isRepeatEnabled}
+              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={!audioUrl}
+              onClick={() => setIsRepeatEnabled((nextValue) => !nextValue)}
+              type="button"
+            >
+              <Repeat className={`size-6 ${isRepeatEnabled ? 'text-[#8f98ff]' : 'text-white'}`} />
+            </button>
           </div>
 
           <div className="grid grid-cols-[37px_1fr_31px] items-center gap-[14px] text-sm font-medium">
             <span>{formatPlaybackTime(currentTime)}</span>
-            <div className="h-[5px] overflow-hidden rounded-full bg-white/30">
-              <div
-                className="h-full rounded-full bg-white"
-                style={{ width: `${audioUrl ? progress : 45}%` }}
-              />
-            </div>
+            <input
+              aria-label="Seek playback"
+              className="player-range"
+              disabled={!audioUrl || duration === 0}
+              max={100}
+              min={0}
+              onChange={(event) => seekToProgress(Number(event.target.value))}
+              onInput={(event) => seekToProgress(Number(event.currentTarget.value))}
+              style={createRangeStyle(audioUrl ? progress : 45)}
+              type="range"
+              value={audioUrl ? progress : 45}
+            />
             <span className="text-white/30">
               {audioUrl ? formatPlaybackTime(duration) : '12:11'}
             </span>
@@ -130,10 +218,30 @@ export function BottomPlayerBar({
         </div>
 
         <div className="grid grid-cols-[24px_100px] items-center gap-[11px] max-lg:hidden">
-          <Volume2 className="size-6 text-white" />
-          <div className="h-[5px] overflow-hidden rounded-full bg-white/30">
-            <div className="h-full w-[85%] rounded-full bg-white" />
-          </div>
+          <button
+            aria-label={isMuted ? 'Unmute playback' : 'Mute playback'}
+            className="grid size-6 place-items-center text-white"
+            onClick={() => setIsMuted((nextValue) => !nextValue)}
+            type="button"
+          >
+            {isMuted || volume === 0 ? (
+              <VolumeX className="size-6" />
+            ) : (
+              <Volume2 className="size-6" />
+            )}
+          </button>
+          <input
+            aria-label="Playback volume"
+            className="player-range"
+            max={1}
+            min={0}
+            onChange={(event) => updateVolume(Number(event.target.value))}
+            onInput={(event) => updateVolume(Number(event.currentTarget.value))}
+            step={0.01}
+            style={createRangeStyle(effectiveVolume * 100)}
+            type="range"
+            value={effectiveVolume}
+          />
         </div>
       </div>
     </aside>

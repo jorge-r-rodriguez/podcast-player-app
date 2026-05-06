@@ -4,9 +4,14 @@ describe('Podcast discovery flow', () => {
       artistName: 'The Music Lab',
       artworkUrl100: `https://example.com/${index + 1}/100x100bb.jpg`,
       collectionId: 123 + index,
-      collectionName: index === 0 ? 'Music Lab Podcast' : `Music Lab Podcast ${index + 1}`,
+      collectionName:
+        index === 0
+          ? 'Music Lab Podcast'
+          : index === 11
+            ? 'Alpha Music Podcast'
+            : `Music Lab Podcast ${index + 1}`,
       primaryGenreName: 'Music',
-      trackCount: 12,
+      trackCount: index + 1,
       wrapperType: 'track',
     }))
 
@@ -36,6 +41,7 @@ describe('Podcast discovery flow', () => {
   })
 
   it('searches podcasts, opens detail and returns to the list', () => {
+    cy.viewport(1440, 900)
     cy.visit('/podcasts')
 
     cy.get('input#podcast-search').should('be.visible')
@@ -44,8 +50,13 @@ describe('Podcast discovery flow', () => {
       expect($element[0].scrollHeight).to.be.greaterThan($element[0].clientHeight)
     })
     cy.get('[data-testid="podcast-results-scroll"]').scrollTo('bottom')
-    cy.contains('Music Lab Podcast 12').should('be.visible')
+    cy.contains('Alpha Music Podcast').should('be.visible')
     cy.get('[data-testid="podcast-results-scroll"]').scrollTo('top')
+    cy.contains('Order by').click()
+    cy.get('[role="menu"]').contains('Episodes').click()
+    cy.get('[data-testid="podcast-results-scroll"] article')
+      .first()
+      .should('contain.text', 'Alpha Music Podcast')
 
     cy.get('input#podcast-search').clear()
     cy.get('input#podcast-search').type('jazz')
@@ -56,11 +67,28 @@ describe('Podcast discovery flow', () => {
     cy.wait('@lookupPodcast')
     cy.contains('Music Lab Podcast').should('be.visible')
     cy.contains('Building better podcasts').should('be.visible')
+    cy.contains('Order by').click()
+    cy.get('[role="menu"]').contains('Title').click()
+    cy.get('[data-testid="episode-results-scroll"] article')
+      .first()
+      .should('contain.text', 'Building better podcasts')
     cy.get('[data-testid="episode-results-scroll"]').should(($element) => {
       expect($element[0].scrollHeight).to.be.greaterThan($element[0].clientHeight)
     })
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('audio').should('have.attr', 'src', 'https://example.com/audio-2.mp3')
+    cy.get('button[aria-label="Next episode"]').click()
+    cy.get('audio').should('have.attr', 'src', 'https://example.com/audio-3.mp3')
+    cy.get('button[aria-label="Previous episode"]').click()
+    cy.get('audio').should('have.attr', 'src', 'https://example.com/audio-2.mp3')
+    cy.get('button[aria-label="Enable repeat"]').click()
+    cy.get('button[aria-label="Disable repeat"]').should('have.attr', 'aria-pressed', 'true')
+    cy.get('input[aria-label="Playback volume"]')
+      .invoke('val', 0.25)
+      .trigger('input', { target: { value: 0.25 } })
+    cy.get('audio').should(($audio) => {
+      expect(($audio[0] as { volume: number }).volume).to.be.lessThan(0.85)
+    })
     cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
     cy.contains('Building better podcasts 10').should('be.visible')
     cy.get('body').type('{esc}')
