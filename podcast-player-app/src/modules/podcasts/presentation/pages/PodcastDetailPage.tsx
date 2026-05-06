@@ -1,16 +1,15 @@
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import { ArrowLeft, Headphones } from 'lucide-react'
+import { ChevronDown, ChevronLeft, Search, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import { usePodcastDetail } from '@/modules/podcasts/application/hooks/usePodcastDetail'
 import type { Episode } from '@/modules/podcasts/domain/entities/Episode'
+import { BottomPlayerBar } from '@/modules/podcasts/presentation/components/BottomPlayerBar'
 import { EmptyState } from '@/modules/podcasts/presentation/components/EmptyState'
 import { EpisodeList } from '@/modules/podcasts/presentation/components/EpisodeList'
 import { ErrorState } from '@/modules/podcasts/presentation/components/ErrorState'
 import { LoadingState } from '@/modules/podcasts/presentation/components/LoadingState'
-import { PodcastPlayer } from '@/modules/podcasts/presentation/components/PodcastPlayer'
+import { PodcastSearchInput } from '@/modules/podcasts/presentation/components/PodcastSearchInput'
 import { PodcastLayout } from '@/modules/podcasts/presentation/layouts/PodcastLayout'
 
 export function PodcastDetailPage() {
@@ -27,21 +26,18 @@ export function PodcastDetailPage() {
   }, [podcast?.episodes, selectedEpisode])
 
   return (
-    <PodcastLayout
-      description="Review podcast metadata, browse available episodes and listen to playable previews."
-      eyebrow="Podcast Detail"
-      title={podcast?.title ?? 'Podcast details'}
-    >
-      <div className="grid gap-8 pb-28">
-        <Button
-          component={Link}
-          startIcon={<ArrowLeft className="size-4" />}
-          sx={{ alignSelf: 'flex-start' }}
-          to="/podcasts"
-          variant="text"
-        >
-          Back to search
-        </Button>
+    <PodcastLayout title="Podcast View">
+      <div className="mx-auto grid w-full max-w-[842px] gap-5">
+        <div className="grid grid-cols-[50px_1fr] gap-[15px]">
+          <Link
+            aria-label="Back to search"
+            className="grid size-[50px] place-items-center rounded-[15px] bg-[#1a1a1a]"
+            to="/podcasts"
+          >
+            <ChevronLeft className="size-5 text-white" />
+          </Link>
+          <PodcastSearchInput onChange={() => undefined} value="podcast" />
+        </div>
 
         {isFetching ? <LoadingState label="Loading podcast detail" variant="list" /> : null}
 
@@ -63,47 +59,49 @@ export function PodcastDetailPage() {
 
         {podcast ? (
           <>
-            <section className="grid gap-6 lg:grid-cols-[360px_1fr] lg:items-end">
-              <div className="aspect-[16/10] overflow-hidden rounded-lg bg-white/[0.06] shadow-2xl shadow-black/30 lg:aspect-square">
+            <div className="mt-3 overflow-hidden rounded-[15px] bg-white/10">
+              <div className="h-[280px] w-full">
                 {podcast.artworkUrl ? (
                   <img
                     alt={`${podcast.title} artwork`}
                     className="size-full object-cover"
                     src={podcast.artworkUrl}
                   />
-                ) : (
-                  <div className="grid size-full place-items-center">
-                    <Headphones aria-hidden="true" className="size-16 text-white/30" />
-                  </div>
-                )}
+                ) : null}
               </div>
+            </div>
 
-              <div className="min-w-0">
-                <div className="flex flex-wrap gap-2">
-                  {podcast.genre ? (
-                    <Chip color="primary" label={podcast.genre} size="small" />
-                  ) : null}
-                  {podcast.episodeCount ? (
-                    <Chip
-                      label={`${podcast.episodeCount} episodes`}
-                      size="small"
-                      variant="outlined"
-                    />
-                  ) : null}
-                </div>
-                <h2 className="mt-5 text-3xl font-bold leading-tight text-white sm:text-5xl">
+            <div className="-mt-2 grid grid-cols-[60px_1fr_127px] items-center">
+              <button
+                aria-label="Pause playlist"
+                className="grid size-[60px] place-items-center rounded-full bg-[#5c67de]"
+                type="button"
+              >
+                <span className="h-6 w-4 border-x-[6px] border-white" />
+              </button>
+
+              <div className="flex min-w-0 items-center justify-center gap-2 px-4">
+                <h2 className="truncate text-center text-[32px] font-bold leading-[40px] tracking-normal text-white">
                   {podcast.title}
                 </h2>
-                <p className="mt-3 text-lg font-medium text-white/60">{podcast.artist}</p>
-                <p className="mt-5 max-w-3xl text-sm leading-7 text-white/50">
-                  {podcast.description ?? 'No podcast description available from iTunes.'}
-                </p>
+                <ShieldCheck className="size-[25px] shrink-0 fill-[#1d9bf0] text-[#1d9bf0]" />
               </div>
-            </section>
+
+              <div className="flex h-10 items-center gap-5 text-white">
+                <Search aria-hidden="true" className="size-4" />
+                <button
+                  className="flex h-10 items-center gap-1.5 text-base font-normal"
+                  type="button"
+                >
+                  Order by
+                  <ChevronDown aria-hidden="true" className="size-[18px]" />
+                </button>
+              </div>
+            </div>
 
             {podcast.episodes.length > 0 ? (
               <EpisodeList
-                episodes={podcast.episodes}
+                episodes={podcast.episodes.slice(0, 6)}
                 onSelectEpisode={setSelectedEpisode}
                 selectedEpisodeId={playerEpisode?.id ?? null}
               />
@@ -114,10 +112,10 @@ export function PodcastDetailPage() {
               />
             )}
 
-            <PodcastPlayer
+            <BottomPlayerBar
+              artist={podcast.artist}
               artworkUrl={podcast.artworkUrl}
-              episode={playerEpisode}
-              podcastTitle={podcast.title}
+              title={playerEpisode?.title ?? podcast.title}
             />
           </>
         ) : null}

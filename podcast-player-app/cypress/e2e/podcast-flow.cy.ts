@@ -47,7 +47,7 @@ describe('Podcast discovery flow', () => {
   it('searches podcasts, opens detail and returns to the list', () => {
     cy.visit('/podcasts')
 
-    cy.contains('h1', 'Discover music podcasts').should('be.visible')
+    cy.get('input#podcast-search').should('be.visible')
     cy.contains('Music Lab Podcast').should('be.visible')
 
     cy.get('input#podcast-search').clear()
@@ -57,11 +57,9 @@ describe('Podcast discovery flow', () => {
     cy.contains('Music Lab Podcast').click()
 
     cy.wait('@lookupPodcast')
-    cy.contains('h1', 'Music Lab Podcast').should('be.visible')
+    cy.contains('Music Lab Podcast').should('be.visible')
     cy.contains('Building better podcasts').should('be.visible')
-    cy.get('audio[controls]').should('have.attr', 'src', 'https://example.com/audio.mp3')
-
-    cy.contains('a', 'Back to search').click()
-    cy.contains('h1', 'Discover music podcasts').should('be.visible')
+    cy.get('a[aria-label="Back to search"]').click()
+    cy.get('input#podcast-search').should('be.visible')
   })
 })

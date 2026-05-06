@@ -1,5 +1,3 @@
-import InputAdornment from '@mui/material/InputAdornment'
-import TextField from '@mui/material/TextField'
 import { Search } from 'lucide-react'
 
 type PodcastSearchInputProps = {
@@ -9,23 +7,19 @@ type PodcastSearchInputProps = {
 
 export function PodcastSearchInput({ onChange, value }: PodcastSearchInputProps) {
   return (
-    <TextField
-      fullWidth
-      id="podcast-search"
-      label="Search podcasts"
-      onChange={(event) => onChange(event.target.value)}
-      placeholder="Search music, jazz, interviews..."
-      slotProps={{
-        input: {
-          startAdornment: (
-            <InputAdornment position="start">
-              <Search aria-hidden="true" className="size-5 text-white/55" />
-            </InputAdornment>
-          ),
-        },
-      }}
-      value={value}
-      variant="outlined"
-    />
+    <div className="relative h-[50px] overflow-hidden rounded-[15px] bg-[#1a1a1a]">
+      <label className="sr-only" htmlFor="podcast-search">
+        Search podcasts
+      </label>
+      <Search aria-hidden="true" className="absolute left-5 top-[15px] size-5 text-white" />
+      <input
+        className="h-full w-full bg-transparent pl-14 pr-5 text-base font-normal text-white outline-none placeholder:text-white/40"
+        id="podcast-search"
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="podcast"
+        type="search"
+        value={value}
+      />
+    </div>
   )
 }

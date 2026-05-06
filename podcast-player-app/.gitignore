@@ -13,6 +13,7 @@ dist-ssr
 *.local
 cypress/screenshots
 cypress/videos
+outputs
 
 # Editor directories and files
 .vscode/*

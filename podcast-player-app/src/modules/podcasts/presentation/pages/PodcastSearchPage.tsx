@@ -1,7 +1,8 @@
-import Pagination from '@mui/material/Pagination'
+import { ChevronDown, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { usePodcastSearch } from '@/modules/podcasts/application/hooks/usePodcastSearch'
+import { BottomPlayerBar } from '@/modules/podcasts/presentation/components/BottomPlayerBar'
 import { EmptyState } from '@/modules/podcasts/presentation/components/EmptyState'
 import { ErrorState } from '@/modules/podcasts/presentation/components/ErrorState'
 import { LoadingState } from '@/modules/podcasts/presentation/components/LoadingState'
@@ -9,15 +10,13 @@ import { PodcastList } from '@/modules/podcasts/presentation/components/PodcastL
 import { PodcastSearchInput } from '@/modules/podcasts/presentation/components/PodcastSearchInput'
 import { PodcastLayout } from '@/modules/podcasts/presentation/layouts/PodcastLayout'
 
-const PAGE_SIZE = 8
-const DEFAULT_SEARCH_TERM = 'music'
+const VISIBLE_ROWS = 8
+const DEFAULT_SEARCH_TERM = 'podcast'
 
 export function PodcastSearchPage() {
   const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM)
-  const [page, setPage] = useState(1)
   const {
     data: podcasts = [],
-    debouncedTerm,
     error,
     isError,
     isFetching,
@@ -27,78 +26,63 @@ export function PodcastSearchPage() {
     term: searchTerm,
   })
 
-  const totalPages = Math.max(1, Math.ceil(podcasts.length / PAGE_SIZE))
-
-  const visiblePodcasts = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE
-
-    return podcasts.slice(start, start + PAGE_SIZE)
-  }, [page, podcasts])
-
-  const handleSearchChange = (nextSearchTerm: string) => {
-    setSearchTerm(nextSearchTerm)
-    setPage(1)
-  }
+  const visiblePodcasts = useMemo(() => podcasts.slice(0, VISIBLE_ROWS), [podcasts])
+  const bottomPodcast = visiblePodcasts[0]
 
   return (
-    <PodcastLayout
-      description="Search, browse and play music podcasts from the iTunes catalog."
-      eyebrow="Podcast Search"
-      title="Discover music podcasts"
-    >
-      <div className="grid gap-8">
-        <section
-          aria-label="Search controls"
-          className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center"
-        >
-          <PodcastSearchInput onChange={handleSearchChange} value={searchTerm} />
-          <div className="rounded-lg border border-white/[0.06] bg-[#1a1a1a] px-4 py-3 text-sm text-white/45">
-            <span className="font-semibold text-white">{podcasts.length}</span> results
+    <PodcastLayout title="Podcast Search">
+      <div className="mx-auto grid w-full max-w-[842px] gap-[34px]">
+        <PodcastSearchInput onChange={setSearchTerm} value={searchTerm} />
+
+        <div className="ml-auto flex h-10 items-center gap-5 text-white">
+          <Search aria-hidden="true" className="size-4" />
+          <button className="flex h-10 items-center gap-1.5 text-base font-normal" type="button">
+            Order by
+            <ChevronDown aria-hidden="true" className="size-[18px]" />
+          </button>
+        </div>
+
+        <div className="mx-auto w-full max-w-[832px]">
+          <div className="grid h-10 grid-cols-[30px_1fr] items-start gap-5 border-b border-white/[0.03] text-sm font-semibold text-white/30 sm:grid-cols-[30px_298px_210px_92px]">
+            <span>#</span>
+            <span>Name</span>
+            <span className="hidden sm:block">Description</span>
+            <span className="hidden sm:block">Released</span>
           </div>
-        </section>
 
-        {!isSearchEnabled ? (
-          <EmptyState
-            description="Type at least two characters to start searching the iTunes podcast catalog."
-            title="Search for a podcast"
-          />
-        ) : null}
+          {isFetching ? <LoadingState label="Loading podcast results" variant="list" /> : null}
 
-        {isError ? (
-          <ErrorState
-            description={error instanceof Error ? error.message : undefined}
-            onRetry={() => {
-              void refetch()
-            }}
-          />
-        ) : null}
+          {isError ? (
+            <ErrorState
+              description={error instanceof Error ? error.message : undefined}
+              onRetry={() => {
+                void refetch()
+              }}
+            />
+          ) : null}
 
-        {isFetching ? <LoadingState label="Loading podcast results" variant="list" /> : null}
+          {!isFetching && !isError && !isSearchEnabled ? (
+            <EmptyState
+              description="Type at least two characters to start searching the iTunes podcast catalog."
+              title="Search for a podcast"
+            />
+          ) : null}
 
-        {!isFetching && !isError && isSearchEnabled && podcasts.length === 0 ? (
-          <EmptyState
-            description={`No podcasts found for "${debouncedTerm}". Try another artist, genre or show name.`}
-            title="No results found"
-          />
-        ) : null}
+          {!isFetching && !isError && isSearchEnabled && visiblePodcasts.length === 0 ? (
+            <EmptyState description="No podcasts found in iTunes." title="No results found" />
+          ) : null}
 
-        {!isFetching && !isError && visiblePodcasts.length > 0 ? (
-          <div className="grid gap-6">
+          {!isFetching && !isError && visiblePodcasts.length > 0 ? (
             <PodcastList podcasts={visiblePodcasts} />
-            {totalPages > 1 ? (
-              <div className="flex justify-center">
-                <Pagination
-                  color="primary"
-                  count={totalPages}
-                  onChange={(_, nextPage) => setPage(nextPage)}
-                  page={page}
-                  shape="rounded"
-                />
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
+
+      <BottomPlayerBar
+        artist={bottomPodcast?.artist}
+        artworkUrl={bottomPodcast?.artworkUrl}
+        title={bottomPodcast?.title}
+      />
     </PodcastLayout>
   )
 }
