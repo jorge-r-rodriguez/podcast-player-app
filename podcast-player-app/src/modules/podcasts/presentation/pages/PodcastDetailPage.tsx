@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronLeft, Search, ShieldCheck } from 'lucide-react'
+import { ChevronDown, ChevronLeft, Play, Search, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -14,6 +14,7 @@ import { PodcastLayout } from '@/modules/podcasts/presentation/layouts/PodcastLa
 
 export function PodcastDetailPage() {
   const { podcastId } = useParams()
+  const [detailSearchTerm, setDetailSearchTerm] = useState('podcast')
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null)
   const { data: podcast, error, isError, isFetching, refetch } = usePodcastDetail({ podcastId })
 
@@ -36,7 +37,7 @@ export function PodcastDetailPage() {
           >
             <ChevronLeft className="size-5 text-white" />
           </Link>
-          <PodcastSearchInput onChange={() => undefined} value="podcast" />
+          <PodcastSearchInput onChange={setDetailSearchTerm} value={detailSearchTerm} />
         </div>
 
         {isFetching ? <LoadingState label="Loading podcast detail" variant="list" /> : null}
@@ -73,11 +74,16 @@ export function PodcastDetailPage() {
 
             <div className="-mt-2 grid grid-cols-[60px_1fr_127px] items-center">
               <button
-                aria-label="Pause playlist"
+                aria-label={playerEpisode ? `Play ${playerEpisode.title}` : 'Play playlist'}
                 className="grid size-[60px] place-items-center rounded-full bg-[#5c67de]"
+                onClick={() => {
+                  if (playerEpisode) {
+                    setSelectedEpisode(playerEpisode)
+                  }
+                }}
                 type="button"
               >
-                <span className="h-6 w-4 border-x-[6px] border-white" />
+                <Play aria-hidden="true" className="ml-1 size-7 fill-white text-white" />
               </button>
 
               <div className="flex min-w-0 items-center justify-center gap-2 px-4">
@@ -101,7 +107,7 @@ export function PodcastDetailPage() {
 
             {podcast.episodes.length > 0 ? (
               <EpisodeList
-                episodes={podcast.episodes.slice(0, 6)}
+                episodes={podcast.episodes}
                 onSelectEpisode={setSelectedEpisode}
                 selectedEpisodeId={playerEpisode?.id ?? null}
               />
@@ -114,6 +120,7 @@ export function PodcastDetailPage() {
 
             <BottomPlayerBar
               artist={podcast.artist}
+              audioUrl={playerEpisode?.previewUrl}
               artworkUrl={podcast.artworkUrl}
               title={playerEpisode?.title ?? podcast.title}
             />

@@ -1,5 +1,5 @@
 import { ChevronDown, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { usePodcastSearch } from '@/modules/podcasts/application/hooks/usePodcastSearch'
 import { BottomPlayerBar } from '@/modules/podcasts/presentation/components/BottomPlayerBar'
@@ -10,7 +10,6 @@ import { PodcastList } from '@/modules/podcasts/presentation/components/PodcastL
 import { PodcastSearchInput } from '@/modules/podcasts/presentation/components/PodcastSearchInput'
 import { PodcastLayout } from '@/modules/podcasts/presentation/layouts/PodcastLayout'
 
-const VISIBLE_ROWS = 8
 const DEFAULT_SEARCH_TERM = 'podcast'
 
 export function PodcastSearchPage() {
@@ -26,8 +25,7 @@ export function PodcastSearchPage() {
     term: searchTerm,
   })
 
-  const visiblePodcasts = useMemo(() => podcasts.slice(0, VISIBLE_ROWS), [podcasts])
-  const bottomPodcast = visiblePodcasts[0]
+  const bottomPodcast = podcasts[0]
 
   return (
     <PodcastLayout title="Podcast Search">
@@ -68,12 +66,12 @@ export function PodcastSearchPage() {
             />
           ) : null}
 
-          {!isFetching && !isError && isSearchEnabled && visiblePodcasts.length === 0 ? (
+          {!isFetching && !isError && isSearchEnabled && podcasts.length === 0 ? (
             <EmptyState description="No podcasts found in iTunes." title="No results found" />
           ) : null}
 
-          {!isFetching && !isError && visiblePodcasts.length > 0 ? (
-            <PodcastList podcasts={visiblePodcasts} />
+          {!isFetching && !isError && podcasts.length > 0 ? (
+            <PodcastList podcasts={podcasts} />
           ) : null}
         </div>
       </div>

@@ -7,7 +7,11 @@ type PodcastListProps = {
 
 export function PodcastList({ podcasts }: PodcastListProps) {
   return (
-    <section aria-label="Podcast search results" className="grid gap-3">
+    <section
+      aria-label="Podcast search results"
+      className="podcast-scroll max-h-[calc(100dvh-320px)] overflow-y-auto pr-1"
+      data-testid="podcast-results-scroll"
+    >
       {podcasts.map((podcast) => (
         <PodcastCard key={podcast.id} podcast={podcast} />
       ))}
