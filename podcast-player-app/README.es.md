@@ -49,7 +49,7 @@ Alcance implementado:
 
 ## Por Que Vite En Lugar De CRA
 
-Although the original statement mentions create-react-app, this project uses Vite as a modern replacement due to better performance, faster development server, simpler configuration and current React ecosystem standards.
+Aunque el enunciado original menciona create-react-app, este proyecto usa Vite como reemplazo moderno por su mejor performance, servidor de desarrollo mas rapido, configuracion mas simple y alineacion con los estandares actuales del ecosistema React.
 
 Vite tambien ofrece un pipeline de build mas claro, buen soporte para TypeScript, HMR rapido y una superficie de configuracion mas simple que los setups legacy basados en CRA.
 
