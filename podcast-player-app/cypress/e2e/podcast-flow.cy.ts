@@ -99,6 +99,7 @@ describe('Podcast discovery flow', () => {
     cy.get('button[aria-label="Enable repeat"]').click()
     cy.get('button[aria-label="Disable repeat"]').should('have.attr', 'aria-pressed', 'true')
     cy.get('input[aria-label="Playback volume"]')
+      .filter(':visible')
       .invoke('val', 0.25)
       .trigger('input', { target: { value: 0.25 } })
     cy.get('audio').should(($audio) => {
@@ -138,6 +139,14 @@ describe('Podcast discovery flow', () => {
 
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('button[aria-label="Pause playback"]').should('be.visible')
+    cy.get('input[aria-label="Playback volume"]').filter(':visible').should('have.length', 1)
+    cy.get('input[aria-label="Playback volume"]')
+      .filter(':visible')
+      .invoke('val', 0.4)
+      .trigger('input', { target: { value: 0.4 } })
+    cy.get('audio').should(($audio) => {
+      expect(($audio[0] as { volume: number }).volume).to.be.lessThan(0.85)
+    })
     cy.get('[data-testid="episode-results-scroll"]').should(($element) => {
       expect($element[0].clientHeight).to.be.greaterThan(100)
       expect($element[0].scrollHeight).to.be.greaterThan($element[0].clientHeight)
@@ -164,6 +173,7 @@ describe('Podcast discovery flow', () => {
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('button[aria-label="Pause playback"]').should('be.visible')
     cy.get('input[aria-label="Seek playback"]').should('be.visible')
+    cy.get('input[aria-label="Playback volume"]').filter(':visible').should('have.length', 1)
 
     cy.viewport('ipad-2')
     cy.reload()
@@ -176,5 +186,6 @@ describe('Podcast discovery flow', () => {
     })
     cy.get('button[aria-label="Play playback"]').should('be.visible')
     cy.get('input[aria-label="Seek playback"]').should('be.visible')
+    cy.get('input[aria-label="Playback volume"]').filter(':visible').should('have.length', 1)
   })
 })
