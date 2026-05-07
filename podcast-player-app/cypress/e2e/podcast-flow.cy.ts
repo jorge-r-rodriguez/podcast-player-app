@@ -1,4 +1,11 @@
 describe('Podcast discovery flow', () => {
+  const visitRoute = (route: string) => {
+    const baseUrl = Cypress.config('baseUrl') ?? ''
+    const usesGitHubPages = baseUrl.includes('github.io/podcast-player-app')
+
+    cy.visit(usesGitHubPages ? `/#${route}` : route)
+  }
+
   beforeEach(() => {
     const podcastResults = Array.from({ length: 12 }, (_, index) => ({
       artistName: 'The Music Lab',
@@ -56,7 +63,7 @@ describe('Podcast discovery flow', () => {
 
   it('searches podcasts, opens detail and returns to the list', () => {
     cy.viewport(1440, 900)
-    cy.visit('/podcasts')
+    visitRoute('/podcasts')
 
     cy.get('input#podcast-search').should('be.visible')
     cy.contains('Music Lab Podcast').should('be.visible')
@@ -127,7 +134,7 @@ describe('Podcast discovery flow', () => {
 
   it('keeps playback controls usable on mobile', () => {
     cy.viewport(390, 844)
-    cy.visit('/podcasts')
+    visitRoute('/podcasts')
 
     cy.contains('Music Lab Podcast').click()
     cy.wait('@lookupPodcast')
@@ -164,7 +171,7 @@ describe('Podcast discovery flow', () => {
 
   it('keeps the player inside tablet viewports', () => {
     cy.viewport('ipad-mini')
-    cy.visit('/podcasts')
+    visitRoute('/podcasts')
 
     cy.contains('Music Lab Podcast').click()
     cy.wait('@lookupPodcast')
