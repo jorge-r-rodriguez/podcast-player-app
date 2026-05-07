@@ -145,4 +145,36 @@ describe('Podcast discovery flow', () => {
     cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
     cy.contains('Building better podcasts 10').should('be.visible')
   })
+
+  it('keeps the player inside tablet viewports', () => {
+    cy.viewport('ipad-mini')
+    cy.visit('/podcasts')
+
+    cy.contains('Music Lab Podcast').click()
+    cy.wait('@lookupPodcast')
+
+    cy.get('aside').should(($player) => {
+      const rect = $player[0].getBoundingClientRect()
+
+      expect(rect.left).to.equal(0)
+      expect(rect.right).to.equal(768)
+      expect(rect.bottom).to.equal(1024)
+    })
+
+    cy.get('button[aria-label="Play Building better podcasts 2"]').click()
+    cy.get('button[aria-label="Pause playback"]').should('be.visible')
+    cy.get('input[aria-label="Seek playback"]').should('be.visible')
+
+    cy.viewport('ipad-2')
+    cy.reload()
+    cy.get('aside').should(($player) => {
+      const rect = $player[0].getBoundingClientRect()
+
+      expect(rect.left).to.equal(0)
+      expect(rect.right).to.equal(768)
+      expect(rect.bottom).to.equal(1024)
+    })
+    cy.get('button[aria-label="Play playback"]').should('be.visible')
+    cy.get('input[aria-label="Seek playback"]').should('be.visible')
+  })
 })

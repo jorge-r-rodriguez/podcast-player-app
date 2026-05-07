@@ -141,7 +141,7 @@ export function BottomPlayerBar({
   }
 
   return (
-    <aside className="fixed inset-x-0 bottom-0 z-20 h-[132px] bg-[#1a1a1a] text-white sm:h-[110px]">
+    <aside className="fixed inset-x-0 bottom-0 z-20 h-[132px] bg-[#1a1a1a] text-white sm:h-[140px] lg:h-[110px]">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption -- podcast previews are audio-only clips provided by iTunes without caption tracks. */}
       <audio
         aria-label={`Audio preview for ${title}`}
@@ -153,9 +153,9 @@ export function BottomPlayerBar({
         ref={audioRef}
         src={audioUrl ?? undefined}
       />
-      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(180px,1fr)_1fr] max-sm:grid-cols-[1fr] max-sm:grid-rows-[42px_66px] max-sm:gap-2 max-sm:px-4 max-sm:py-3">
-        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 sm:grid-cols-[110px_1fr]">
-          <div className="size-[74px] overflow-hidden bg-white/10 max-sm:size-[42px] sm:size-[110px]">
+      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(0,1fr)] max-lg:grid-rows-[54px_58px] max-lg:gap-3 max-lg:px-8 max-lg:py-3 max-sm:grid-rows-[42px_66px] max-sm:gap-2 max-sm:px-4">
+        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-lg:grid-cols-[54px_1fr] max-lg:gap-4 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 lg:grid-cols-[110px_1fr]">
+          <div className="size-[74px] overflow-hidden bg-white/10 max-lg:size-[54px] max-sm:size-[42px] lg:size-[110px]">
             {artworkUrl ? (
               <img alt="" className="size-full object-cover" src={artworkUrl} />
             ) : (
@@ -170,7 +170,7 @@ export function BottomPlayerBar({
           </div>
         </div>
 
-        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:w-full max-sm:gap-2">
+        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-lg:grid-cols-[260px_minmax(180px,1fr)] max-lg:gap-6 max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:w-full max-sm:gap-2">
           <div className="grid grid-cols-[22px_22px_48px_22px_22px] items-center gap-5 max-sm:justify-center sm:grid-cols-[24px_24px_50px_24px_24px] sm:gap-[30px]">
             <button
               aria-label="Shuffle episode"
