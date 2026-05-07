@@ -71,13 +71,15 @@ export function PodcastDetailPage() {
     [visibleEpisodes],
   )
 
+  const firstPlayableEpisode = playableEpisodes[0] ?? null
+
   const playerEpisode = useMemo(() => {
     if (selectedEpisode) {
       return selectedEpisode
     }
 
-    return playableEpisodes[0] ?? null
-  }, [playableEpisodes, selectedEpisode])
+    return firstPlayableEpisode
+  }, [firstPlayableEpisode, selectedEpisode])
 
   const selectAdjacentEpisode = (direction: 'next' | 'previous') => {
     if (playableEpisodes.length === 0) {
@@ -116,6 +118,12 @@ export function PodcastDetailPage() {
   const playEpisode = (episode: Episode) => {
     setSelectedEpisode(episode)
     setPlayRequestToken((token) => token + 1)
+  }
+
+  const playFirstVisibleEpisode = () => {
+    if (firstPlayableEpisode) {
+      playEpisode(firstPlayableEpisode)
+    }
   }
 
   return (
@@ -166,13 +174,14 @@ export function PodcastDetailPage() {
 
             <div className="grid grid-cols-[52px_minmax(0,1fr)] items-center gap-x-4 gap-y-2 sm:-mt-2 sm:grid-cols-[60px_1fr_127px] sm:gap-0">
               <button
-                aria-label={playerEpisode ? `Play ${playerEpisode.title}` : 'Play playlist'}
-                className="grid size-[52px] place-items-center rounded-full bg-[#5c67de] sm:size-[60px]"
-                onClick={() => {
-                  if (playerEpisode) {
-                    playEpisode(playerEpisode)
-                  }
-                }}
+                aria-label={
+                  firstPlayableEpisode
+                    ? `Play first episode: ${firstPlayableEpisode.title}`
+                    : 'Play playlist'
+                }
+                className="grid size-[52px] place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[60px]"
+                disabled={!firstPlayableEpisode}
+                onClick={playFirstVisibleEpisode}
                 type="button"
               >
                 <Play aria-hidden="true" className="ml-1 size-6 fill-white text-white sm:size-7" />
