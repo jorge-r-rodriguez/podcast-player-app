@@ -42,36 +42,99 @@ export class ITunesApiClient {
   }
 
   async searchPodcasts(term: string, limit: number): Promise<ITunesPodcastDto[]> {
-    const response = await this.httpClient.get<ITunesSearchResponse>(this.createUrl('/search'), {
-      params: {
-        entity: 'podcast',
-        limit,
-        media: 'podcast',
-        term,
-      } satisfies RequestParams,
+    const response = await this.request('/search', {
+      entity: 'podcast',
+      limit,
+      media: 'podcast',
+      term,
     })
 
-    return response.data.results
+    return response.results
   }
 
   async lookupPodcast(podcastId: string): Promise<ITunesPodcastDto[]> {
-    const response = await this.httpClient.get<ITunesLookupResponse>(this.createUrl('/lookup'), {
-      params: {
-        entity: 'podcastEpisode',
-        id: podcastId,
-      } satisfies RequestParams,
+    const response = await this.request('/lookup', {
+      entity: 'podcastEpisode',
+      id: podcastId,
     })
 
-    return response.data.results
+    return response.results
   }
 
-  private createUrl(path: string) {
-    const targetUrl = `${env.apiBaseUrl}${path}`
+  private async request(path: string, params: RequestParams) {
+    const targetUrl = this.createTargetUrl(path, params)
 
-    if (!env.enableCorsProxy) {
-      return targetUrl
+    try {
+      const response = await this.httpClient.get<ITunesLookupResponse>(targetUrl)
+
+      return response.data
+    } catch (error) {
+      if (this.canUseJsonpFallback()) {
+        return this.requestWithJsonp(targetUrl)
+      }
+
+      if (env.enableCorsProxy) {
+        const response = await this.httpClient.get<ITunesLookupResponse>(
+          `${env.corsProxyUrl}${encodeURIComponent(targetUrl)}`,
+        )
+
+        return response.data
+      }
+
+      throw error
     }
+  }
 
-    return `${env.corsProxyUrl}${encodeURIComponent(targetUrl)}`
+  private createTargetUrl(path: string, params: RequestParams) {
+    const url = new URL(`${env.apiBaseUrl}${path}`)
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        url.searchParams.set(key, String(value))
+      }
+    })
+
+    return url.toString()
+  }
+
+  private canUseJsonpFallback() {
+    return typeof window !== 'undefined' && typeof document !== 'undefined'
+  }
+
+  private requestWithJsonp(targetUrl: string) {
+    return new Promise<ITunesLookupResponse>((resolve, reject) => {
+      const callbackName = `itunesJsonp_${Date.now()}_${Math.random().toString(36).slice(2)}`
+      const url = new URL(targetUrl)
+      const script = document.createElement('script')
+      const browserWindow = window as unknown as Window &
+        Record<string, (payload: ITunesLookupResponse) => void>
+
+      const cleanup = () => {
+        script.remove()
+        delete browserWindow[callbackName]
+        window.clearTimeout(timeoutId)
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        cleanup()
+        reject(new Error('iTunes JSONP request timed out'))
+      }, 10000)
+
+      browserWindow[callbackName] = (payload) => {
+        cleanup()
+        resolve(payload)
+      }
+
+      script.onerror = () => {
+        cleanup()
+        reject(new Error('iTunes JSONP request failed'))
+      }
+
+      url.searchParams.set('callback', callbackName)
+      script.src = url.toString()
+      script.async = true
+
+      document.head.appendChild(script)
+    })
   }
 }
