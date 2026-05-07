@@ -42,6 +42,7 @@ export function EpisodeList({
               <div className="grid h-full grid-cols-[30px_1fr] items-center gap-5 sm:grid-cols-[30px_294px_210px_92px_37px]">
                 <Tooltip
                   disableInteractive
+                  disableTouchListener
                   title={episode.previewUrl ? 'Play episode preview' : 'Preview not available'}
                 >
                   <span>
