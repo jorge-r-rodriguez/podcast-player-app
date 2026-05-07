@@ -1,23 +1,33 @@
 # Podcast Player Technical Test
 
-Mini React application for searching and listening to music podcasts using the iTunes Search API. The visual direction is based on the provided Figma community design and follows a dark, minimal podcast player interface.
+Senior React technical test for a podcast player application based on the provided Figma design.
 
-The project is built incrementally with senior-level reviewability in mind: small commits, explicit boundaries, tested architecture layers, and production-oriented decisions documented in this README.
+The application allows users to search real podcasts from the iTunes Search API, open a podcast detail screen, browse episodes, and control playback through a responsive audio player. The implementation focuses on production-oriented frontend architecture, visual fidelity, accessibility, testability, and maintainability.
 
-## Implemented Features
+Live demo:
 
-- Podcast search with debounce.
+[https://jorge-r-rodriguez.github.io/podcast-player-app/](https://jorge-r-rodriguez.github.io/podcast-player-app/)
+
+## Project Scope
+
+This project was built as a technical assessment, not as a basic demo. The main goal was to deliver a small but well-structured frontend application with clear architectural boundaries and a realistic user experience.
+
+Implemented scope:
+
+- Podcast search view.
+- Podcast detail view.
 - Real iTunes Search API integration.
-- Configurable CORS proxy support through infrastructure.
-- Responsive dark UI inspired by the Figma reference.
+- Responsive Figma-inspired dark podcast player UI.
+- Search debounce.
 - Search result pagination.
-- Loading, error and empty states.
-- Podcast detail route.
-- Episode list when iTunes returns podcast episodes.
-- HTML5 audio player for episode previews.
-- Route-level lazy loading.
-- React Query caching and retry control.
-- Unit, component and E2E test coverage.
+- Episode list with scrollable content.
+- Play, pause, previous, next, repeat, shuffle, seek and volume controls.
+- Synchronized playback state between episode rows and the bottom player.
+- Mobile, tablet and desktop responsive behavior.
+- Loading, error, empty and skeleton states.
+- GitHub Pages deployment.
+- CORS fallback strategy for iTunes on static hosting.
+- Unit, component and E2E coverage.
 
 ## Technical Stack
 
@@ -39,78 +49,94 @@ The project is built incrementally with senior-level reviewability in mind: smal
 
 Although the original statement mentions create-react-app, this project uses Vite as a modern replacement due to better performance, faster development server, simpler configuration and current React ecosystem standards.
 
-Vite also provides a clearer production build pipeline, first-class TypeScript support, fast HMR, and a smaller configuration surface than legacy CRA setups.
+Vite also provides a clearer production build pipeline, strong TypeScript support, fast HMR, and a smaller configuration surface than legacy CRA setups.
 
 ## Architecture
 
-The application follows a frontend-oriented Hexagonal Architecture with DDD and feature-based organization.
+The codebase follows a frontend-oriented Hexagonal Architecture with DDD principles and feature-based organization.
 
-The goal is to keep business rules and external API details outside visual components. UI components should render state and delegate application behavior to hooks, use cases, repositories, and infrastructure adapters.
+The objective is to keep business rules, API details, mapping logic, and framework-specific concerns separated from visual components. Components render UI state and delegate behavior to application hooks, use cases, repository contracts, and infrastructure adapters.
 
 ```txt
 src/
-├── app/
-│   ├── config/
-│   ├── providers/
-│   ├── router/
-│   └── theme/
-├── modules/
-│   └── podcasts/
-│       ├── domain/
-│       │   ├── entities/
-│       │   ├── repositories/
-│       │   └── use-cases/
-│       ├── infrastructure/
-│       │   ├── api/
-│       │   ├── mappers/
-│       │   └── repositories/
-│       ├── application/
-│       │   ├── hooks/
-│       │   └── services/
-│       └── presentation/
-│           ├── components/
-│           ├── layouts/
-│           └── pages/
-├── shared/
-│   ├── hooks/
-│   ├── types/
-│   ├── ui/
-│   └── utils/
-├── styles/
-└── test/
+|-- app/
+|   |-- config/
+|   |-- providers/
+|   |-- router/
+|   `-- theme/
+|-- modules/
+|   `-- podcasts/
+|       |-- domain/
+|       |   |-- entities/
+|       |   |-- repositories/
+|       |   `-- use-cases/
+|       |-- infrastructure/
+|       |   |-- api/
+|       |   |-- mappers/
+|       |   `-- repositories/
+|       |-- application/
+|       |   |-- hooks/
+|       |   `-- services/
+|       `-- presentation/
+|           |-- components/
+|           |-- layouts/
+|           `-- pages/
+|-- shared/
+|   |-- hooks/
+|   |-- types/
+|   |-- ui/
+|   `-- utils/
+|-- styles/
+`-- test/
 ```
 
 ## Hexagonal Architecture
 
-The domain layer defines the core contracts and use cases. Infrastructure implements adapters for external systems such as iTunes and optional CORS proxy handling. Presentation depends on application hooks, not on API response shapes.
+The domain layer defines the core entities, repository contracts and use cases. Infrastructure implements adapters for external systems, especially iTunes API access and CORS-safe request handling. Presentation depends on application hooks and domain-ready models, not on external API response shapes.
 
-Planned boundaries:
+Main boundaries:
 
-- Domain entities: normalized `Podcast` and `Episode` models.
-- Repository contracts: ports used by use cases.
-- Infrastructure repositories: iTunes-specific adapters.
-- Mappers: isolate external API payloads from domain models.
-- Application hooks: React Query integration and UI-ready orchestration.
-- Presentation components: accessible, responsive, reusable UI.
+- Domain entities: normalized `Podcast`, `PodcastSearchResult` and `Episode` models.
+- Repository contracts: ports consumed by use cases.
+- Use cases: search podcasts and get podcast detail.
+- Infrastructure API client: iTunes request handling.
+- Infrastructure repository: iTunes-specific adapter.
+- Mappers: conversion from iTunes payloads into domain models.
+- Application hooks: React Query orchestration.
+- Presentation components: accessible and responsive UI.
 
 ## DDD Frontend
 
-The `podcasts` module is treated as a bounded context. Domain language is kept explicit through entities, use cases, repository contracts, and feature-specific presentation components.
+The `podcasts` module is treated as a bounded context. Domain language is explicit in entities, use cases, repositories, and feature-specific UI components.
 
-Components should not know about iTunes field names, CORS proxy rules, Axios configuration, or cache strategy.
+Visual components do not know about iTunes field names, Axios configuration, CORS handling, JSONP fallback, or React Query cache strategy.
 
 ## API Integration
 
-The application will use the iTunes Search API:
+The application consumes the iTunes Search API:
 
-- Search podcasts: `https://itunes.apple.com/search?media=podcast&term={query}`
-- Podcast lookup: `https://itunes.apple.com/lookup?id={collectionId}`
+- Search podcasts: `https://itunes.apple.com/search?media=podcast&entity=podcast&term={query}`
+- Podcast detail with episodes: `https://itunes.apple.com/lookup?id={collectionId}&entity=podcastEpisode`
 
-API access is implemented in `src/modules/podcasts/infrastructure/api`.
+API access is implemented in:
+
+```txt
+src/modules/podcasts/infrastructure/api/iTunesApiClient.ts
+```
+
+The iTunes API payload is isolated through mapper functions before reaching the domain and presentation layers.
 
 ## CORS Handling
 
-CORS behavior is configurable through environment variables:
+GitHub Pages is a static host, and iTunes can return restrictive CORS headers for `github.io` origins. To keep the public demo functional, the infrastructure API client uses this strategy:
+
+1. Try a standard HTTP request through Axios.
+2. If the browser blocks the request due to CORS, fall back to iTunes JSONP support.
+3. Keep optional AllOrigins configuration available through environment variables.
+
+This behavior is encapsulated in the infrastructure layer. Components and hooks remain unaware of CORS details.
+
+Environment variables:
 
 ```txt
 VITE_ITUNES_API_BASE_URL=https://itunes.apple.com
@@ -118,27 +144,104 @@ VITE_CORS_PROXY_URL=https://api.allorigins.win/raw?url=
 VITE_ENABLE_CORS_PROXY=false
 ```
 
-If browser CORS restrictions appear during integration, the AllOrigins proxy is applied inside infrastructure only. Components and hooks remain unaware of proxy details.
+## Routing and GitHub Pages
 
-## UI Direction
+Local development uses Vite normally. The public GitHub Pages deployment uses a production build with the correct base path:
 
-The visual system is inspired by the Figma podcast player:
+```txt
+/podcast-player-app/
+```
 
-- Dark mode by default
-- Minimal music player layout
-- Strong content hierarchy
-- Mobile-first responsive composition
-- TailwindCSS for layout and visual utilities
-- Material UI only for targeted controls such as inputs, pagination, skeletons, tooltips, progress indicators, and icon buttons
+For static hosting compatibility, the deployed app uses hash routing on GitHub Pages:
+
+```txt
+https://jorge-r-rodriguez.github.io/podcast-player-app/#/podcasts
+```
+
+The deployment workflow builds the nested Vite app from the repository root and publishes the generated `dist` artifact through GitHub Actions.
+
+## UI and Figma Fidelity
+
+The interface is based on the provided Figma podcast player design:
+
+- Dark mode UI.
+- Minimal podcast/music player layout.
+- Large podcast artwork on detail.
+- Table-like episode and search rows.
+- Bottom playback bar.
+- Desktop, tablet and mobile adaptations.
+- Scrollable lists to preserve player visibility.
+- Icon-only controls with accessible labels.
+- TailwindCSS for layout, spacing, responsive behavior and visual polish.
+- Material UI used selectively for controls such as inputs, pagination, skeletons, tooltips and progress indicators.
+
+## Accessibility
+
+Accessibility considerations implemented:
+
+- Semantic HTML structure.
+- Real buttons and links for interactions.
+- Associated labels for form controls.
+- `aria-label` on icon-only player controls.
+- `aria-live` for loading and error states.
+- Visible focus states.
+- Descriptive `alt` text for podcast artwork.
+- Keyboard-friendly search, navigation and playback controls.
+- No clickable `div` elements for primary actions.
+
+## Performance
+
+Performance decisions:
+
+- Route-level lazy loading with `React.lazy`.
+- Code splitting through Vite.
+- React Query cache keys by search query and podcast ID.
+- Configured `staleTime`, `gcTime`, retry behavior and disabled unnecessary focus refetch.
+- Debounced search input.
+- Memoized derived data for pagination, ordering and selected playback state.
+- Isolated mappers and use cases to avoid UI-level data transformation.
+- Avoided Redux because server state is handled by React Query and UI state is local.
+
+## Testing Strategy
+
+The project includes focused tests across architecture layers:
+
+- Unit tests for podcast mappers.
+- Unit tests for domain use cases.
+- Unit tests for shared formatting utilities.
+- Hook tests for debounced behavior.
+- Component tests for `PodcastCard`, `PodcastSearchInput`, `EmptyState`, `ErrorState`, `EpisodeList`, and `PodcastPlayer`.
+- Cypress E2E flow for search, detail navigation, playback controls, scroll behavior, mobile and tablet player layout.
+- Optional live GitHub Pages E2E test for the real deployed route and iTunes data.
+
+Run the normal test suite:
+
+```bash
+npm run test
+npm run test:e2e
+```
+
+Run the live GitHub Pages verification:
+
+```bash
+npx cypress run --config baseUrl=https://jorge-r-rodriguez.github.io/podcast-player-app --env LIVE_PAGES=true --spec cypress/e2e/podcast-live-pages.cy.ts
+```
 
 ## How to Run Locally
 
+Install dependencies:
+
 ```bash
 npm install
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-The app runs on Vite's default local server:
+Local URL:
 
 ```txt
 http://localhost:5173
@@ -149,6 +252,7 @@ http://localhost:5173
 ```bash
 npm run dev
 npm run build
+npm run build:pages
 npm run preview
 npm run test
 npm run test:watch
@@ -157,67 +261,34 @@ npm run lint
 npm run format
 ```
 
-## Testing Strategy
+## Deployment
 
-Current coverage:
+The project is deployed to GitHub Pages using GitHub Actions.
 
-- Unit tests for podcast mappers.
-- Unit tests for domain use cases.
-- Unit tests for shared formatting utilities.
-- Hook tests for debounced search behavior.
-- Component tests for `PodcastCard`, `PodcastSearchInput`, `EmptyState`, `ErrorState`, `EpisodeList`, and `PodcastPlayer`.
-- Cypress E2E flow: load app, search podcast, inspect results, open detail, validate audio player, return to list.
-
-## Accessibility Considerations
-
-Implementation standards:
-
-- Semantic HTML.
-- Real buttons and links for interaction.
-- Associated labels for form controls.
-- `aria-label` for icon-only controls.
-- `aria-live` for loading and error states where useful.
-- Visible focus states.
-- Descriptive `alt` text for podcast artwork.
-- Keyboard navigability for search, pagination, list items, and playback controls.
-
-## Performance Decisions
-
-Baseline decisions already in place:
-
-- Route-level lazy loading with `React.lazy`.
-- React Query provider configured with `staleTime`, `gcTime`, controlled retry, and disabled focus refetch.
-- Feature modules prepared for code splitting and low coupling.
-
-Implemented decisions:
-
-- Debounced search input to avoid unnecessary API calls.
-- Memoized derived data for pagination and selected episode playback.
-- React Query cache keys by query and podcast ID.
-- Repository contracts and mappers isolate the iTunes API.
-- Business logic stays out of JSX and visual components.
-
-## Screenshots
-
-Screenshots can be added from the local app once final visual review is complete.
-
-## Git Commit Convention
-
-Use Conventional Commits with scopes:
+Deployment branch:
 
 ```txt
-chore(config): setup eslint and prettier
-feat(search): add podcast search page
-feat(detail): implement podcast detail screen
-refactor(domain): separate repository contracts
-test(search): add search hook unit tests
-docs(readme): document architecture and setup
+technical-test/podcast-player-app
 ```
+
+Public URL:
+
+[https://jorge-r-rodriguez.github.io/podcast-player-app/](https://jorge-r-rodriguez.github.io/podcast-player-app/)
+
+The workflow runs:
+
+- Dependency installation.
+- Lint.
+- Unit tests.
+- Production build for Pages.
+- Artifact upload.
+- GitHub Pages deployment.
 
 ## Future Improvements
 
 - Persist recent searches.
-- Add optimistic UI for recently opened podcasts.
-- Improve episode support if richer podcast feeds are integrated.
-- Add visual regression snapshots for the Figma-inspired UI.
-- Add CI pipeline for lint, unit tests, build, and Cypress.
+- Add favorite podcasts.
+- Add richer podcast feed parsing for metadata not exposed by iTunes.
+- Add visual regression testing for the Figma-inspired UI.
+- Add GitHub Actions checks for Cypress in a CI matrix.
+- Improve audio error handling for podcast hosts that reject embedded playback.
