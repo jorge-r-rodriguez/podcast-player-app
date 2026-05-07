@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronLeft, Play } from 'lucide-react'
+import { ChevronLeft, Play } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -14,6 +14,7 @@ import {
   OrderByControl,
 } from '@/modules/podcasts/presentation/components/OrderByControl'
 import { PodcastSearchInput } from '@/modules/podcasts/presentation/components/PodcastSearchInput'
+import { VerifiedBadgeIcon } from '@/modules/podcasts/presentation/components/VerifiedBadgeIcon'
 import { PodcastLayout } from '@/modules/podcasts/presentation/layouts/PodcastLayout'
 
 type EpisodeSortOption = 'released' | 'title' | 'duration'
@@ -203,7 +204,7 @@ export function PodcastDetailPage() {
                 <h2 className="truncate text-[24px] font-bold leading-8 tracking-normal text-white sm:text-center sm:text-[32px] sm:leading-[40px]">
                   {podcast.title}
                 </h2>
-                <BadgeCheck className="size-5 shrink-0 fill-[#1d9bf0] text-[#1d9bf0] sm:size-[25px]" />
+                <VerifiedBadgeIcon className="size-5 shrink-0 sm:size-[25px]" />
               </div>
 
               <div className="col-span-2 flex justify-end sm:col-span-1 sm:block">
