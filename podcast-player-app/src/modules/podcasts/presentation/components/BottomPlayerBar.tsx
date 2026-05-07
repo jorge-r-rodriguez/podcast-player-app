@@ -11,6 +11,7 @@ type BottomPlayerBarProps = {
   onPlaybackStateChange?: (isPlaying: boolean) => void
   onPrevious?: () => void
   onShuffle?: () => void
+  pauseRequestToken?: number
   title?: string
 }
 
@@ -34,6 +35,7 @@ export function BottomPlayerBar({
   onPlaybackStateChange,
   onPrevious,
   onShuffle,
+  pauseRequestToken = 0,
   title = 'How to make your partner talk more',
 }: BottomPlayerBarProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -79,6 +81,17 @@ export function BottomPlayerBar({
 
     void playSelectedEpisode()
   }, [audioUrl, autoPlayToken])
+
+  useEffect(() => {
+    const audio = audioRef.current
+
+    if (!audio || pauseRequestToken === 0) {
+      return
+    }
+
+    audio.pause()
+    setIsPlaying(false)
+  }, [pauseRequestToken])
 
   useEffect(() => {
     if (audioRef.current) {

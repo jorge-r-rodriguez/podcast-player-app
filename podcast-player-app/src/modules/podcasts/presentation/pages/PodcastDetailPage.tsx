@@ -1,4 +1,4 @@
-import { ChevronLeft, Play, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, ChevronLeft, Play } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -28,6 +28,7 @@ export function PodcastDetailPage() {
   const { podcastId } = useParams()
   const [detailSearchTerm, setDetailSearchTerm] = useState('')
   const [isPlayerPlaying, setIsPlayerPlaying] = useState(false)
+  const [pauseRequestToken, setPauseRequestToken] = useState(0)
   const [playRequestToken, setPlayRequestToken] = useState(0)
   const [sortOption, setSortOption] = useState<EpisodeSortOption>('released')
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null)
@@ -120,6 +121,17 @@ export function PodcastDetailPage() {
     setPlayRequestToken((token) => token + 1)
   }
 
+  const toggleEpisodePlayback = (episode: Episode) => {
+    const isCurrentEpisode = episode.id === playerEpisode?.id
+
+    if (isCurrentEpisode && isPlayerPlaying) {
+      setPauseRequestToken((token) => token + 1)
+      return
+    }
+
+    playEpisode(episode)
+  }
+
   const playFirstVisibleEpisode = () => {
     if (firstPlayableEpisode) {
       playEpisode(firstPlayableEpisode)
@@ -191,7 +203,7 @@ export function PodcastDetailPage() {
                 <h2 className="truncate text-[24px] font-bold leading-8 tracking-normal text-white sm:text-center sm:text-[32px] sm:leading-[40px]">
                   {podcast.title}
                 </h2>
-                <ShieldCheck className="size-5 shrink-0 fill-[#1d9bf0] text-[#1d9bf0] sm:size-[25px]" />
+                <BadgeCheck className="size-5 shrink-0 fill-[#1d9bf0] text-[#1d9bf0] sm:size-[25px]" />
               </div>
 
               <div className="col-span-2 flex justify-end sm:col-span-1 sm:block">
@@ -206,7 +218,7 @@ export function PodcastDetailPage() {
             {visibleEpisodes.length > 0 ? (
               <EpisodeList
                 episodes={visibleEpisodes}
-                onSelectEpisode={playEpisode}
+                onSelectEpisode={toggleEpisodePlayback}
                 playingEpisodeId={isPlayerPlaying ? playerEpisode?.id : null}
                 selectedEpisodeId={playerEpisode?.id ?? null}
               />
@@ -232,6 +244,7 @@ export function PodcastDetailPage() {
               onPlaybackStateChange={setIsPlayerPlaying}
               onPrevious={() => selectAdjacentEpisode('previous')}
               onShuffle={selectRandomEpisode}
+              pauseRequestToken={pauseRequestToken}
               title={playerEpisode?.title ?? podcast.title}
             />
           </>

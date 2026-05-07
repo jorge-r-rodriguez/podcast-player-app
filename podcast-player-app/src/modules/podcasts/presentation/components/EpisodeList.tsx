@@ -47,7 +47,7 @@ export function EpisodeList({
                 >
                   <span>
                     <IconButton
-                      aria-label={`Play ${episode.title}`}
+                      aria-label={isPlaying ? `Pause ${episode.title}` : `Play ${episode.title}`}
                       disabled={!episode.previewUrl}
                       onClick={() => onSelectEpisode(episode)}
                       size="small"
