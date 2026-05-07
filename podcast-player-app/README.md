@@ -1,5 +1,7 @@
 # Podcast Player Technical Test
 
+Language: English | [Español](README.es.md)
+
 Senior React technical test for a podcast player application based on the provided Figma design.
 
 The application allows users to search real podcasts from the iTunes Search API, open a podcast detail screen, browse episodes, and control playback through a responsive audio player. The implementation focuses on production-oriented frontend architecture, visual fidelity, accessibility, testability, and maintainability.
