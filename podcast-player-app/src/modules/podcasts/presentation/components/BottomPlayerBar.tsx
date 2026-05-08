@@ -187,7 +187,7 @@ export function BottomPlayerBar({
           <div className="grid grid-cols-[22px_22px_48px_22px_22px] items-center gap-5 max-sm:justify-center sm:grid-cols-[24px_24px_50px_24px_24px] sm:gap-[30px] md:justify-self-start">
             <button
               aria-label="Shuffle episode"
-              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="control-button grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
               disabled={!audioUrl || !onShuffle}
               onClick={onShuffle}
               type="button"
@@ -196,7 +196,7 @@ export function BottomPlayerBar({
             </button>
             <button
               aria-label="Previous episode"
-              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="control-button grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
               disabled={!audioUrl || !onPrevious}
               onClick={onPrevious}
               type="button"
@@ -205,7 +205,7 @@ export function BottomPlayerBar({
             </button>
             <button
               aria-label={isPlaying ? 'Pause playback' : 'Play playback'}
-              className="grid size-12 place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[50px]"
+              className="primary-play-button grid size-12 place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[50px]"
               disabled={!audioUrl}
               onClick={() => {
                 void togglePlayback()
@@ -220,7 +220,7 @@ export function BottomPlayerBar({
             </button>
             <button
               aria-label="Next episode"
-              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="control-button grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
               disabled={!audioUrl || !onNext}
               onClick={onNext}
               type="button"
@@ -230,7 +230,7 @@ export function BottomPlayerBar({
             <button
               aria-label={isRepeatEnabled ? 'Disable repeat' : 'Enable repeat'}
               aria-pressed={isRepeatEnabled}
-              className="grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="control-button grid size-6 place-items-center text-white disabled:cursor-not-allowed disabled:opacity-45"
               disabled={!audioUrl}
               onClick={() => setIsRepeatEnabled((nextValue) => !nextValue)}
               type="button"
@@ -263,7 +263,7 @@ export function BottomPlayerBar({
           <div className="grid grid-cols-[24px_1fr] items-center gap-[11px] max-md:w-full max-md:max-w-[180px] max-sm:max-w-[190px] lg:hidden">
             <button
               aria-label={isMuted ? 'Unmute playback' : 'Mute playback'}
-              className="grid size-6 place-items-center text-white"
+              className="control-button grid size-6 place-items-center text-white"
               onClick={() => setIsMuted((nextValue) => !nextValue)}
               type="button"
             >
@@ -291,7 +291,7 @@ export function BottomPlayerBar({
         <div className="grid grid-cols-[24px_100px] items-center gap-[11px] max-lg:hidden">
           <button
             aria-label={isMuted ? 'Unmute playback' : 'Mute playback'}
-            className="grid size-6 place-items-center text-white"
+            className="control-button grid size-6 place-items-center text-white"
             onClick={() => setIsMuted((nextValue) => !nextValue)}
             type="button"
           >

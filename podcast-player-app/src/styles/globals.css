@@ -45,9 +45,58 @@ a {
   color: inherit;
 }
 
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
 :focus-visible {
   outline: 3px solid rgba(143, 152, 255, 0.85);
   outline-offset: 3px;
+}
+
+.control-button {
+  transition:
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.primary-play-button {
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.row-play-indicator {
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .control-button:not(:disabled):hover {
+    color: #c7cbff;
+    transform: translateY(-1px);
+  }
+
+  .primary-play-button:not(:disabled):hover {
+    background-color: #717cff;
+    box-shadow: 0 0 0 8px rgba(92, 103, 222, 0.14);
+    transform: translateY(-1px) scale(1.03);
+  }
+
+  .row-play-target:hover .row-play-indicator {
+    background-color: rgba(92, 103, 222, 0.22);
+    box-shadow: 0 0 0 5px rgba(92, 103, 222, 0.1);
+    transform: scale(1.05);
+  }
+
+  .order-button:hover {
+    color: #c7cbff;
+  }
 }
 
 .podcast-scroll {
@@ -92,6 +141,18 @@ a {
   opacity: 0.5;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .player-range:not(:disabled):hover {
+    background: linear-gradient(
+      to right,
+      #c7cbff 0,
+      #c7cbff var(--range-progress),
+      rgba(255, 255, 255, 0.38) var(--range-progress),
+      rgba(255, 255, 255, 0.38) 100%
+    );
+  }
+}
+
 .player-range::-webkit-slider-thumb {
   width: 10px;
   height: 10px;
@@ -106,4 +167,16 @@ a {
   background: #ffffff;
   border: 0;
   border-radius: 999px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .player-range:not(:disabled):hover::-webkit-slider-thumb {
+    background: #c7cbff;
+    box-shadow: 0 0 0 5px rgba(199, 203, 255, 0.16);
+  }
+
+  .player-range:not(:disabled):hover::-moz-range-thumb {
+    background: #c7cbff;
+    box-shadow: 0 0 0 5px rgba(199, 203, 255, 0.16);
+  }
 }

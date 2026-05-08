@@ -33,7 +33,7 @@ export function OrderByControl<T extends string>({
         aria-controls={anchorElement ? 'podcast-order-menu' : undefined}
         aria-expanded={anchorElement ? 'true' : undefined}
         aria-haspopup="menu"
-        className="flex h-10 items-center gap-1.5 text-base font-normal"
+        className="control-button order-button flex h-10 items-center gap-1.5 text-base font-normal"
         onClick={(event) => setAnchorElement(event.currentTarget)}
         type="button"
       >

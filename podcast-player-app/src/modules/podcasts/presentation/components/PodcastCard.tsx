@@ -13,10 +13,10 @@ export const PodcastCard = memo(function PodcastCard({ podcast }: PodcastCardPro
     <article className="h-[80px] border-b border-white/[0.03]">
       <Link
         aria-label={`Open details for ${podcast.title} by ${podcast.artist}`}
-        className="grid h-full grid-cols-[30px_1fr] items-center gap-5 focus-visible:rounded sm:grid-cols-[30px_298px_210px_92px]"
+        className="row-play-target grid h-full grid-cols-[30px_1fr] items-center gap-5 focus-visible:rounded sm:grid-cols-[30px_298px_210px_92px]"
         to={`/podcasts/${podcast.id}`}
       >
-        <span className="grid size-[30px] place-items-center rounded-full">
+        <span className="row-play-indicator grid size-[30px] place-items-center rounded-full">
           <Play aria-hidden="true" className="size-[15px] fill-white text-white" />
         </span>
 

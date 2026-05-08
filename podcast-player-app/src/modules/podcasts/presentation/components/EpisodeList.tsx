@@ -54,7 +54,18 @@ export function EpisodeList({
                       sx={{
                         backgroundColor: isSelected ? '#5c67de' : 'transparent',
                         height: 30,
+                        transition:
+                          'background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease',
                         width: 30,
+                        '@media (hover: hover) and (pointer: fine)': {
+                          '&:not(.Mui-disabled):hover': {
+                            backgroundColor: isSelected
+                              ? '#717cff'
+                              : 'rgba(92, 103, 222, 0.22)',
+                            boxShadow: '0 0 0 5px rgba(92, 103, 222, 0.1)',
+                            transform: 'scale(1.05)',
+                          },
+                        },
                       }}
                     >
                       <Play

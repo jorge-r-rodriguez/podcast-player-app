@@ -192,7 +192,7 @@ export function PodcastDetailPage() {
                     ? `Play first episode: ${firstPlayableEpisode.title}`
                     : 'Play playlist'
                 }
-                className="grid size-[52px] place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[60px]"
+                className="primary-play-button grid size-[52px] place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[60px]"
                 disabled={!firstPlayableEpisode}
                 onClick={playFirstVisibleEpisode}
                 type="button"
