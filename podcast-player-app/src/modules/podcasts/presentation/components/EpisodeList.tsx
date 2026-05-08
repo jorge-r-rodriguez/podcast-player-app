@@ -30,7 +30,7 @@ export function EpisodeList({
       </div>
 
       <div
-        className="podcast-scroll max-h-[calc(100dvh-500px)] min-h-[120px] scroll-pb-[176px] overflow-y-auto pb-[176px] pr-1 sm:max-h-[calc(100dvh-565px)] sm:min-h-[160px] sm:scroll-pb-[156px] sm:pb-[156px] lg:scroll-pb-[130px] lg:pb-[130px]"
+        className="podcast-scroll max-h-[calc(100dvh-635px)] min-h-[80px] scroll-pb-20 overflow-y-auto pb-20 pr-1 sm:max-h-[calc(100dvh-650px)] sm:min-h-[88px] sm:scroll-pb-0 sm:pb-0 lg:max-h-[calc(100dvh-635px)]"
         data-testid="episode-results-scroll"
       >
         {episodes.map((episode) => {

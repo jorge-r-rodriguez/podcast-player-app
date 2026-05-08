@@ -184,7 +184,7 @@ export function PodcastDetailPage() {
         {podcast ? (
           <>
             <div className="mt-1 overflow-hidden rounded-[15px] bg-white/10 sm:mt-3">
-              <div className="h-[210px] w-full sm:h-[280px]">
+              <div className="detail-artwork w-full">
                 {podcast.artworkUrl ? (
                   <img
                     alt={`${podcast.title} artwork`}
