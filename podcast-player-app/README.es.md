@@ -47,17 +47,11 @@ Alcance implementado:
 - ESLint
 - Prettier
 
-## Por Que Vite En Lugar De CRA
+## Decision De Tooling: Vite
 
-Aunque el enunciado original menciona create-react-app, este proyecto usa Vite como reemplazo moderno por su mejor performance, servidor de desarrollo mas rapido, configuracion mas simple y alineacion con los estandares actuales del ecosistema React.
+Aunque el enunciado original menciona create-react-app y el documento de guia referencia Webpack, este proyecto usa Vite como herramienta de build.
 
-Vite tambien ofrece un pipeline de build mas claro, buen soporte para TypeScript, HMR rapido y una superficie de configuracion mas simple que los setups legacy basados en CRA.
-
-## Por Que Vite En Lugar De Webpack
-
-El documento de guia menciona Webpack como punto a considerar. Este proyecto usa Vite porque actualmente es una herramienta de build productiva y estandar dentro del ecosistema React, con una experiencia de desarrollo mas simple y rapida para este tipo de SPA.
-
-Vite igualmente genera un bundle de produccion optimizado y assets con code splitting, reduciendo configuracion manual que seria necesaria en un setup custom de Webpack. La decision queda documentada de forma explicita porque la prueba tecnica valora el criterio arquitectonico y de tooling utilizado.
+Vite es un reemplazo moderno de CRA y una alternativa lista para produccion frente a un setup custom de Webpack para esta SPA. Ofrece servidor de desarrollo mas rapido, configuracion mas simple, buen soporte para TypeScript, bundles de produccion optimizados y assets con code splitting. La decision queda documentada de forma explicita porque la prueba tecnica valora el criterio arquitectonico y de tooling utilizado.
 
 ## Arquitectura
 
