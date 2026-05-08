@@ -64,6 +64,10 @@ export class ITunesApiClient {
   private async request(path: string, params: RequestParams) {
     const targetUrl = this.createTargetUrl(path, params)
 
+    if (this.shouldUseJsonpFirst()) {
+      return this.requestWithJsonp(targetUrl)
+    }
+
     try {
       const response = await this.httpClient.get<ITunesLookupResponse>(targetUrl)
 
@@ -99,6 +103,10 @@ export class ITunesApiClient {
 
   private canUseJsonpFallback() {
     return typeof window !== 'undefined' && typeof document !== 'undefined'
+  }
+
+  private shouldUseJsonpFirst() {
+    return this.canUseJsonpFallback() && window.location.hostname.endsWith('github.io')
   }
 
   private requestWithJsonp(targetUrl: string) {
