@@ -53,6 +53,12 @@ Although the original statement mentions create-react-app, this project uses Vit
 
 Vite also provides a clearer production build pipeline, strong TypeScript support, fast HMR, and a smaller configuration surface than legacy CRA setups.
 
+## Why Vite Instead of Webpack
+
+The guidance document mentions Webpack as a point to consider. This project uses Vite because it is now a standard production-ready build tool in the React ecosystem and provides a simpler, faster developer experience for this type of SPA.
+
+Vite still produces an optimized production bundle and code-split assets, while reducing manual configuration that would otherwise be required with a custom Webpack setup. The decision is documented intentionally because the technical test values clear architectural and tooling criteria.
+
 ## Architecture
 
 The codebase follows a frontend-oriented Hexagonal Architecture with DDD principles and feature-based organization.
