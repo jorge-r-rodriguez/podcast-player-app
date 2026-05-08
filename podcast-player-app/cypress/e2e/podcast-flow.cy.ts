@@ -72,6 +72,14 @@ describe('Podcast discovery flow', () => {
     })
     cy.get('[data-testid="podcast-results-scroll"]').scrollTo('bottom')
     cy.contains('Alpha Music Podcast').should('be.visible')
+    cy.get('[data-testid="podcast-results-scroll"] article')
+      .last()
+      .then(($article) => {
+        const itemBottom = $article.get(0)!.getBoundingClientRect().bottom
+        const playerTop = Cypress.$('aside')[0]!.getBoundingClientRect().top
+
+        expect(itemBottom).to.be.lessThan(playerTop)
+      })
     cy.get('[data-testid="podcast-results-scroll"]').scrollTo('top')
     cy.contains('Order by').click()
     cy.get('[role="menu"]').contains('Episodes').click()
@@ -134,6 +142,14 @@ describe('Podcast discovery flow', () => {
     cy.get('input#podcast-search').clear()
     cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
     cy.contains('Building better podcasts 10').should('be.visible')
+    cy.get('[data-testid="episode-results-scroll"] article')
+      .last()
+      .then(($article) => {
+        const itemBottom = $article.get(0)!.getBoundingClientRect().bottom
+        const playerTop = Cypress.$('aside')[0]!.getBoundingClientRect().top
+
+        expect(itemBottom).to.be.lessThan(playerTop)
+      })
     cy.get('body').type('{esc}')
     cy.get('a[aria-label="Back to search"]').click()
     cy.get('input#podcast-search').should('be.visible')
@@ -174,6 +190,14 @@ describe('Podcast discovery flow', () => {
     })
     cy.get('[data-testid="episode-results-scroll"]').scrollTo('bottom')
     cy.contains('Building better podcasts 10').should('be.visible')
+    cy.get('[data-testid="episode-results-scroll"] article')
+      .last()
+      .then(($article) => {
+        const itemBottom = $article.get(0)!.getBoundingClientRect().bottom
+        const playerTop = Cypress.$('aside')[0]!.getBoundingClientRect().top
+
+        expect(itemBottom).to.be.lessThan(playerTop)
+      })
   })
 
   it('keeps the player inside tablet viewports', () => {
