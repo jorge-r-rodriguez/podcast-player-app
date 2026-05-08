@@ -1,4 +1,4 @@
-import { ChevronLeft, Play } from 'lucide-react'
+import { ChevronLeft, Pause, Play } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -83,6 +83,9 @@ export function PodcastDetailPage() {
     return firstPlayableEpisode
   }, [firstPlayableEpisode, selectedEpisode])
 
+  const isFirstPlayableEpisodePlaying =
+    isPlayerPlaying && Boolean(firstPlayableEpisode && playerEpisode?.id === firstPlayableEpisode.id)
+
   const selectAdjacentEpisode = (direction: 'next' | 'previous') => {
     if (playableEpisodes.length === 0) {
       return
@@ -134,9 +137,16 @@ export function PodcastDetailPage() {
   }
 
   const playFirstVisibleEpisode = () => {
-    if (firstPlayableEpisode) {
-      playEpisode(firstPlayableEpisode)
+    if (!firstPlayableEpisode) {
+      return
     }
+
+    if (isFirstPlayableEpisodePlaying) {
+      setPauseRequestToken((token) => token + 1)
+      return
+    }
+
+    playEpisode(firstPlayableEpisode)
   }
 
   return (
@@ -189,7 +199,9 @@ export function PodcastDetailPage() {
               <button
                 aria-label={
                   firstPlayableEpisode
-                    ? `Play first episode: ${firstPlayableEpisode.title}`
+                    ? `${isFirstPlayableEpisodePlaying ? 'Pause' : 'Play'} first episode: ${
+                        firstPlayableEpisode.title
+                      }`
                     : 'Play playlist'
                 }
                 className="primary-play-button grid size-[52px] place-items-center rounded-full bg-[#5c67de] disabled:cursor-not-allowed disabled:opacity-45 sm:size-[60px]"
@@ -197,7 +209,14 @@ export function PodcastDetailPage() {
                 onClick={playFirstVisibleEpisode}
                 type="button"
               >
-                <Play aria-hidden="true" className="ml-1 size-6 fill-white text-white sm:size-7" />
+                {isFirstPlayableEpisodePlaying ? (
+                  <Pause aria-hidden="true" className="size-6 fill-white text-white sm:size-7" />
+                ) : (
+                  <Play
+                    aria-hidden="true"
+                    className="ml-1 size-6 fill-white text-white sm:size-7"
+                  />
+                )}
               </button>
 
               <div className="flex min-w-0 items-center gap-2 sm:justify-center sm:px-4">

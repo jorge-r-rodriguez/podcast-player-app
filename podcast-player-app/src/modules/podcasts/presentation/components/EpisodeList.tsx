@@ -62,8 +62,6 @@ export function EpisodeList({
                             backgroundColor: isSelected
                               ? '#717cff'
                               : 'rgba(92, 103, 222, 0.22)',
-                            boxShadow: '0 0 0 5px rgba(92, 103, 222, 0.1)',
-                            transform: 'scale(1.05)',
                           },
                         },
                       }}

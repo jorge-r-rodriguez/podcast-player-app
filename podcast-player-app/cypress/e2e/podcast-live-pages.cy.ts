@@ -11,5 +11,6 @@ describeLivePages('Live GitHub Pages podcast detail', () => {
     cy.get('button[aria-label^="Play first episode:"]').click()
     cy.get('audio').should('have.attr', 'src').and('include', '.mp3')
     cy.get('button[aria-label="Pause playback"]').should('be.visible')
+    cy.get('button[aria-label^="Pause first episode:"]').should('be.visible')
   })
 })

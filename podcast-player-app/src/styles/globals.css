@@ -90,8 +90,6 @@ button {
 
   .row-play-target:hover .row-play-indicator {
     background-color: rgba(92, 103, 222, 0.22);
-    box-shadow: 0 0 0 5px rgba(92, 103, 222, 0.1);
-    transform: scale(1.05);
   }
 
   .order-button:hover {

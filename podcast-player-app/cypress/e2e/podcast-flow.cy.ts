@@ -91,6 +91,13 @@ describe('Podcast discovery flow', () => {
     cy.get('button[aria-label="Play first episode: Building better podcasts"]').click()
     cy.get('audio').should('have.attr', 'src', 'https://example.com/audio-1.mp3')
     cy.get('button[aria-label="Pause playback"]').should('be.visible')
+    cy.get('button[aria-label="Pause first episode: Building better podcasts"]').should(
+      'be.visible',
+    )
+    cy.get('button[aria-label="Pause first episode: Building better podcasts"]').click()
+    cy.get('button[aria-label="Play playback"]').should('be.visible')
+    cy.get('button[aria-label="Play first episode: Building better podcasts"]').click()
+    cy.get('button[aria-label="Pause playback"]').should('be.visible')
     cy.contains('Order by').click()
     cy.get('[role="menu"]').contains('Title').click()
     cy.get('[data-testid="episode-results-scroll"] article')
