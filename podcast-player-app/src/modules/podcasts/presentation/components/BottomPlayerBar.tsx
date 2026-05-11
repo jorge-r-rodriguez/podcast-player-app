@@ -154,7 +154,7 @@ export function BottomPlayerBar({
   }
 
   return (
-    <aside className="fixed inset-x-0 bottom-0 z-20 h-[160px] bg-[#1a1a1a] text-white sm:h-[140px] lg:h-[110px]">
+    <aside className="fixed inset-x-0 bottom-0 z-20 h-[160px] bg-[#1a1a1a] text-white sm:h-[140px] xl:h-[110px]">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption -- podcast previews are audio-only clips provided by iTunes without caption tracks. */}
       <audio
         aria-label={`Audio preview for ${title}`}
@@ -166,9 +166,9 @@ export function BottomPlayerBar({
         ref={audioRef}
         src={audioUrl ?? undefined}
       />
-      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(0,1fr)] max-lg:grid-rows-[54px_58px] max-lg:gap-3 max-lg:px-8 max-lg:py-3 max-sm:grid-rows-[42px_90px] max-sm:gap-2 max-sm:px-4">
-        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-lg:grid-cols-[54px_1fr] max-lg:gap-4 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 lg:grid-cols-[110px_1fr]">
-          <div className="size-[74px] overflow-hidden bg-white/10 max-lg:size-[54px] max-sm:size-[42px] lg:size-[110px]">
+      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-xl:grid-cols-[minmax(0,1fr)] max-xl:grid-rows-[54px_58px] max-xl:gap-3 max-xl:px-8 max-xl:py-3 max-sm:grid-rows-[42px_90px] max-sm:gap-2 max-sm:px-4">
+        <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-xl:grid-cols-[54px_1fr] max-xl:gap-4 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 xl:grid-cols-[110px_1fr]">
+          <div className="size-[74px] overflow-hidden bg-white/10 max-xl:size-[54px] max-sm:size-[42px] xl:size-[110px]">
             {artworkUrl ? (
               <img alt="" className="size-full object-cover" src={artworkUrl} />
             ) : (
@@ -183,7 +183,7 @@ export function BottomPlayerBar({
           </div>
         </div>
 
-        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-lg:grid-cols-[260px_minmax(180px,1fr)_120px] max-lg:gap-5 max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:w-full max-sm:gap-2">
+        <div className="grid min-w-0 grid-cols-[266px_minmax(220px,515px)] items-center gap-[50px] max-xl:grid-cols-[260px_minmax(180px,1fr)_120px] max-xl:gap-5 max-md:grid-cols-[1fr] max-md:justify-items-center max-md:gap-3 max-sm:w-full max-sm:gap-2">
           <div className="grid grid-cols-[22px_22px_48px_22px_22px] items-center gap-5 max-sm:justify-center sm:grid-cols-[24px_24px_50px_24px_24px] sm:gap-[30px] md:justify-self-start">
             <button
               aria-label="Shuffle episode"
@@ -260,7 +260,7 @@ export function BottomPlayerBar({
             </span>
           </div>
 
-          <div className="hidden grid-cols-[24px_1fr] items-center gap-[11px] max-md:w-full max-md:max-w-[180px] sm:grid max-sm:max-w-[190px] lg:hidden">
+          <div className="hidden grid-cols-[24px_1fr] items-center gap-[11px] max-md:w-full max-md:max-w-[180px] sm:grid max-sm:max-w-[190px] xl:hidden">
             <button
               aria-label={isMuted ? 'Unmute playback' : 'Mute playback'}
               className="control-button grid size-6 place-items-center text-white"
@@ -288,7 +288,7 @@ export function BottomPlayerBar({
           </div>
         </div>
 
-        <div className="grid grid-cols-[24px_100px] items-center gap-[11px] max-lg:hidden">
+        <div className="grid grid-cols-[24px_100px] items-center gap-[11px] max-xl:hidden">
           <button
             aria-label={isMuted ? 'Unmute playback' : 'Mute playback'}
             className="control-button grid size-6 place-items-center text-white"

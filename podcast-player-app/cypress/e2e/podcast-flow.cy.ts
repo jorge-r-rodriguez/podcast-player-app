@@ -226,5 +226,17 @@ describe('Podcast discovery flow', () => {
     cy.get('button[aria-label="Play playback"]').should('be.visible')
     cy.get('input[aria-label="Seek playback"]').should('be.visible')
     cy.get('input[aria-label="Playback volume"]').filter(':visible').should('have.length', 1)
+
+    cy.viewport(1024, 1366)
+    cy.reload()
+    cy.get('input[aria-label="Playback volume"]')
+      .filter(':visible')
+      .should('have.length', 1)
+      .then(($volume) => {
+        const rect = $volume[0].getBoundingClientRect()
+        const playerRect = Cypress.$('aside')[0]!.getBoundingClientRect()
+
+        expect(rect.right).to.be.lessThan(playerRect.right - 24)
+      })
   })
 })
