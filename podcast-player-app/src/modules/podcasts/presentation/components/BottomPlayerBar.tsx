@@ -166,7 +166,7 @@ export function BottomPlayerBar({
         ref={audioRef}
         src={audioUrl ?? undefined}
       />
-      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(0,1fr)] max-lg:grid-rows-[54px_58px] max-lg:gap-3 max-lg:px-8 max-lg:py-3 max-sm:grid-rows-[42px_74px_24px] max-sm:gap-2 max-sm:px-4">
+      <div className="mx-auto grid h-full max-w-[1512px] grid-cols-[minmax(220px,407px)_1fr_160px] items-center gap-6 pr-[30px] max-lg:grid-cols-[minmax(0,1fr)] max-lg:grid-rows-[54px_58px] max-lg:gap-3 max-lg:px-8 max-lg:py-3 max-sm:grid-rows-[42px_90px] max-sm:gap-2 max-sm:px-4">
         <div className="grid min-w-0 grid-cols-[74px_1fr] items-center gap-5 max-lg:grid-cols-[54px_1fr] max-lg:gap-4 max-sm:grid-cols-[42px_1fr] max-sm:gap-3 lg:grid-cols-[110px_1fr]">
           <div className="size-[74px] overflow-hidden bg-white/10 max-lg:size-[54px] max-sm:size-[42px] lg:size-[110px]">
             {artworkUrl ? (
@@ -260,7 +260,7 @@ export function BottomPlayerBar({
             </span>
           </div>
 
-          <div className="grid grid-cols-[24px_1fr] items-center gap-[11px] max-md:w-full max-md:max-w-[180px] max-sm:max-w-[190px] lg:hidden">
+          <div className="hidden grid-cols-[24px_1fr] items-center gap-[11px] max-md:w-full max-md:max-w-[180px] sm:grid max-sm:max-w-[190px] lg:hidden">
             <button
               aria-label={isMuted ? 'Unmute playback' : 'Mute playback'}
               className="control-button grid size-6 place-items-center text-white"

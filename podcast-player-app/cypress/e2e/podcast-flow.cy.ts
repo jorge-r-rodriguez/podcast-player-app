@@ -176,14 +176,8 @@ describe('Podcast discovery flow', () => {
 
     cy.get('button[aria-label="Play Building better podcasts 2"]').click()
     cy.get('button[aria-label="Pause playback"]').should('be.visible')
-    cy.get('input[aria-label="Playback volume"]').filter(':visible').should('have.length', 1)
-    cy.get('input[aria-label="Playback volume"]')
-      .filter(':visible')
-      .invoke('val', 0.4)
-      .trigger('input', { target: { value: 0.4 } })
-    cy.get('audio').should(($audio) => {
-      expect(($audio[0] as { volume: number }).volume).to.be.lessThan(0.85)
-    })
+    cy.get('input[aria-label="Playback volume"]').filter(':visible').should('have.length', 0)
+    cy.get('button[aria-label="Mute playback"]').filter(':visible').should('have.length', 0)
     cy.get('[data-testid="episode-results-scroll"]').should(($element) => {
       expect($element[0].clientHeight).to.be.greaterThan(100)
       expect($element[0].scrollHeight).to.be.greaterThan($element[0].clientHeight)
